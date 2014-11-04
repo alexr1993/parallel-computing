@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 int dim;
 int length;
@@ -22,17 +23,49 @@ void print_matrix(float *arr)
     printf("\n\n");
 }
 
-/* Reads square array of length dim from file. Ignores whitespace/newlines */
-float *read_array(char *filename, int dim)
+/*
+ * Reads square array of length dim from file. Ignores whitespace/newlines
+ *
+ * Input matrices must contain only digits, non tab spaces, and newliens
+ */
+float *read_array(char *filename)
 {
-    int nelements = dim * dim;
-    arr = malloc(nelements * sizeof(int));
-    int i;
+    // Infer dimension and check validity or matrix
     FILE *input = fopen(filename, "r");
+    int character = fgetc(input);
+    length = 0;
+
+    while (character != EOF)
+    {
+        if ( !(character == ' ' || character == '\n'))
+        {
+            ++length;
+        }
+        character = fgetc(input);
+    }
+
+    // Check array is square
+    double root_of_length = sqrt((double)length);
+    if (floor(root_of_length) == root_of_length)
+    {
+        dim = (int)root_of_length;
+        printf("Matrix length: %d, dimension: %d\n", length, dim);
+    }
+    else
+    {
+        printf("Matrix is not square, length: %d\n", length);
+        exit(1);
+    }
+    fclose(input);
+
+    // Deserialize array
+    arr = malloc(length * sizeof(int));
+    int i;
+    input = fopen(filename, "r"); // reopen file to reset ptr
 
     int temp;
 
-    for (i = 0; i < nelements; ++i)
+    for (i = 0; i < length; ++i)
     {
         // Skip whitespace
         do {
@@ -111,19 +144,42 @@ bool is_edge_index (int index, int dim)
     return mod == 0 || mod == dim - 1;
 }
 
+void relax (float *arr, float *temp_arr)
+{
+    float right, left, above, below;
+    int i;
+
+    // Calculate new values
+    for (i = 0; i < length; ++i)
+    {
+        // Copy over edge cells (no computation needed)
+        if (is_edge_index(i, dim))
+        {
+            temp_arr[i] = arr[i];
+        }
+        // Set cell to the average of it's neighbours
+        else
+        {
+            right = arr[i+1];
+            left  = arr[i-1];
+            above = arr[i-dim];
+            below = arr[i+dim];
+
+            temp_arr[i] = (right + left + above + below) / 4;
+        }
+    }
+}
+
 void solve (float *arr, int dim, int nthreads, float precision)
 {
     int i;
     int length = dim * dim;
 
     float *precision_arr = malloc(length * sizeof(int));
+    float *temp_arr      = malloc(length * sizeof(int));
 
-    /* Not precise enough yet - Relax */
-    float *temp_arr = malloc(length * sizeof(int));
-
-    // Initiliase to get inside loop
+    // Initiliase current_precision to unsatisfactory value
     float current_precision = precision + 1.0;
-
     float right, left, above, below, cell;
 
     // Iterate
@@ -145,55 +201,59 @@ void solve (float *arr, int dim, int nthreads, float precision)
             }
             else
             {
-                precision_arr[i] = calc_precision(cell, right, left, above, below);
+                precision_arr[i] = calc_precision( cell, right, left,
+                                                   above, below       );
             }
         }
 
         current_precision = get_current_precision(precision_arr, length);
+        printf("Current precision: %.3f\nState of matrix:\n",
+               current_precision);
+        print_matrix(arr);
 
         /* Check base condition - return if precision is high enough */
         if (current_precision < precision)
         {
-            printf("Relaxation Complete!\nPrecision: %.3f\n", current_precision);
+            printf("Relaxation Complete!\n");
+            printf("Precision: %.3f\n", current_precision);
             return;
         }
 
-        // Calculate new values
-        for (i = 0; i < length; ++i)
-        {
-            // Copy over edge cells (no computation needed)
-            if (is_edge_index(i, dim))
-            {
-                temp_arr[i] = arr[i];
-            }
-            // Set cell to the average of it's neighbours
-            else
-            {
-                right = arr[i+1];
-                left  = arr[i-1];
-                above = arr[i-dim];
-                below = arr[i+dim];
-
-                temp_arr[i] = (right + left + above + below) / 4;
-            }
-        }
-        // Copy over results
+        // Continue iteration
+        relax(arr, temp_arr);
         memcpy(arr, temp_arr, length * sizeof(float));
-        printf("Current precision: %.3f\nState of matrix:\n",
-               current_precision);
-        print_matrix(temp_arr);
     }
 }
 
 int main (int argc, char *argv[])
 {
     /* Command line args: array filename, dimension, nthreads, precision */
-    char *filename = "matrix";
-    dim = 4;
-    length = dim * dim;
+    char *filename = "matrices/matrix";
     int nthreads = 8;
     float precision = 7;
-    arr = read_array(filename, dim);
+
+    int c = 0;
+
+    while ((c = getopt(argc, argv, "f:p:d:")) != -1)
+    {
+        switch (c)
+        {
+          case 'f':
+            filename = malloc(strlen(optarg) * sizeof(char));
+            strncpy(filename, optarg, strlen(optarg));
+            printf("Reading matrix from file: %s\n", filename);
+            break;
+
+          case 'p':
+            precision = strtof(optarg, NULL);
+            break;
+
+          default:
+            printf("Invalid arg: %s\n", optarg);
+            break;
+        }
+    }
+    arr = read_array(filename); // set length and dim
 
     solve(arr, dim, nthreads, precision);
 
