@@ -1,4 +1,5 @@
 #include <math.h>
+#include <pthread.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,6 +9,7 @@
 int dim;
 int length;
 float *arr;
+pthread_barrier_t barrier;
 
 void print_matrix(float *arr)
 {
@@ -81,37 +83,31 @@ float *read_array(char *filename)
     return arr;
 }
 
-/*
- * Returns true if the difference between cell and it's neighbours is less
- * than prec
- */
-float calc_precision (float cell, float right, float left,
-                      float above, float below            )
+bool has_met_precision(float max_change, int precision)
 {
-    float rightd = fabs(cell - right);
-    float leftd  = fabs(cell - left);
-    float aboved = fabs(cell - above);
-    float belowd = fabs(cell - below);
+    // max_change must be lower than the error margin
+    float err_margin = pow(10, (float) -precision);
+    return max_change < err_margin;
+}
 
-    float prec_arr[4] = { rightd, leftd, aboved, belowd };
-
-    float max_precision = 0;
+/*
+ * Set the precision array to the difference between the old and new matrix
+ * values
+ */
+void recalc_prec_arr(float *old_vals, float *new_vals, float *prec_arr)
+{
     int i;
 
-    for (i = 0; i < 4; ++i)
+    for (i = 0; i < length; ++i)
     {
-        if (prec_arr[i] > max_precision)
-        {
-            max_precision = prec_arr[i];
-        }
+        prec_arr[i] = fabs(old_vals[i] - new_vals[i]);
     }
-    return max_precision;
 }
 
 /* Checks for the highest value in the array and returns it, the highest value
  * is the lowest precision which is how precision is measured
  */
-float get_current_precision(float *precision_arr, int length)
+float get_max(float *precision_arr)
 {
     int i;
     float max = 0;
@@ -144,7 +140,13 @@ bool is_edge_index (int index, int dim)
     return mod == 0 || mod == dim - 1;
 }
 
-void relax (float *arr, float *temp_arr)
+/*
+ * Both params are square arrays in 1D form
+ *
+ * Sets each element of new_values to the average of the 4 neighbours of each
+ * cell in arr
+ */
+void relax (float *arr, float *new_values)
 {
     float right, left, above, below;
     int i;
@@ -155,7 +157,7 @@ void relax (float *arr, float *temp_arr)
         // Copy over edge cells (no computation needed)
         if (is_edge_index(i, dim))
         {
-            temp_arr[i] = arr[i];
+            new_values[i] = arr[i];
         }
         // Set cell to the average of it's neighbours
         else
@@ -165,72 +167,67 @@ void relax (float *arr, float *temp_arr)
             above = arr[i-dim];
             below = arr[i+dim];
 
-            temp_arr[i] = (right + left + above + below) / 4;
+            new_values[i] = (right + left + above + below) / 4;
         }
     }
+
+    // TODO use barrier here
 }
 
-void solve (float *arr, int dim, int nthreads, float precision)
+void solve (float *arr, int dim, int nthreads, int precision)
 {
-    int i;
-    int length = dim * dim;
-
     float *precision_arr = malloc(length * sizeof(int));
-    float *temp_arr      = malloc(length * sizeof(int));
+    float *new_values    = malloc(length * sizeof(int));
+    float max_change;
 
-    // Initiliase current_precision to unsatisfactory value
-    float current_precision = precision + 1.0;
-    float right, left, above, below, cell;
+    pthread_t thread; // should be array of nthreads
 
-    // Iterate
+    // Iterate until relaxed to given precision
     while (true)
     {
-        // Calculate current precision
-        for (i = 0; i < length; ++i)
-        {
-            cell  = arr[i];
-            right = arr[i+1];
-            left  = arr[i-1];
-            above = arr[i-dim];
-            below = arr[i+dim];
+        pthread_create( thread[id],
+                        NULL,
+                        (void *(*)(void *))relax, // i don't even
+                        struct argument
+                      );
 
-            // Can only calculate precision for interior cells
-            if (is_edge_index(i, dim))
-            {
-                // Nothing to do here
-            }
-            else
-            {
-                precision_arr[i] = calc_precision( cell, right, left,
-                                                   above, below       );
-            }
-        }
+        relax(arr, new_values); // TODO remove once parallelised
 
-        current_precision = get_current_precision(precision_arr, length);
-        printf("Current precision: %.3f\nState of matrix:\n",
-               current_precision);
+        // TODO for all threads
+        pthread_join( thread[id],
+                      NULL);
+
+        // Update contents of precision array
+        recalc_prec_arr(arr, new_values, precision_arr);
+        max_change = get_max(precision_arr);
+
+        // Inform user
+        printf( "Max change: %.3f\nState of matrix:\n",
+                max_change                              );
+
         print_matrix(arr);
 
         /* Check base condition - return if precision is high enough */
-        if (current_precision < precision)
+        if ( has_met_precision(max_change, precision) )
         {
-            printf("Relaxation Complete!\n");
-            printf("Precision: %.3f\n", current_precision);
+            printf( "Precise to %d decimal place(s). Relaxation Complete!\n",
+                    precision);
             return;
         }
-
-        // Continue iteration
-        relax(arr, temp_arr);
-        memcpy(arr, temp_arr, length * sizeof(float));
+        else
+        {
+            // Continue iteration
+            memcpy(arr, new_values, length * sizeof(float));
+        }
     }
 }
 
 int main (int argc, char *argv[])
 {
     /* Command line args: array filename, dimension, nthreads, precision */
-    char *filename = "matrices/matrix";
+    char *filename = "matrices/binmatrix";
     int nthreads = 8;
-    float precision = 7;
+    int precision = 1;
 
     int c = 0;
 
@@ -245,7 +242,7 @@ int main (int argc, char *argv[])
             break;
 
           case 'p':
-            precision = strtof(optarg, NULL);
+            precision = (int) strtof(optarg, NULL);
             break;
 
           default:
