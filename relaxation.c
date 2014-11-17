@@ -1,5 +1,4 @@
 #include <math.h>
-#include <pthread.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,7 +8,6 @@
 int dim;
 int length;
 float *arr;
-pthread_barrier_t barrier;
 
 void print_matrix(float *arr)
 {
@@ -170,8 +168,6 @@ void relax (float *arr, float *new_values)
             new_values[i] = (right + left + above + below) / 4;
         }
     }
-
-    // TODO use barrier here
 }
 
 void solve (float *arr, int dim, int nthreads, int precision)
@@ -180,22 +176,10 @@ void solve (float *arr, int dim, int nthreads, int precision)
     float *new_values    = malloc(length * sizeof(int));
     float max_change;
 
-    pthread_t thread; // should be array of nthreads
-
     // Iterate until relaxed to given precision
     while (true)
     {
-        pthread_create( thread[id],
-                        NULL,
-                        (void *(*)(void *))relax, // i don't even
-                        struct argument
-                      );
-
         relax(arr, new_values); // TODO remove once parallelised
-
-        // TODO for all threads
-        pthread_join( thread[id],
-                      NULL);
 
         // Update contents of precision array
         recalc_prec_arr(arr, new_values, precision_arr);
