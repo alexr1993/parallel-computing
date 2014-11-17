@@ -1,13 +1,25 @@
 #include <math.h>
+#include <pthread.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
-int dim;
-int length;
+/* Globals */
+int dim, length, nthreads, precision;
 float *arr;
+
+pthread_barrier_t barrier;
+
+struct thread_info {
+    pthread_t thread_id;
+    int       thread_num;
+    float     *input_arr;
+    float     *output_arr;
+};
+
+struct thread_info *threads;
 
 void print_matrix(float *arr)
 {
@@ -168,9 +180,10 @@ void relax (float *arr, float *new_values)
             new_values[i] = (right + left + above + below) / 4;
         }
     }
+    //pthread_join(thread_id, NULL);
 }
 
-void solve (float *arr, int dim, int nthreads, int precision)
+void solve (void)
 {
     float *precision_arr = malloc(length * sizeof(int));
     float *new_values    = malloc(length * sizeof(int));
@@ -179,7 +192,12 @@ void solve (float *arr, int dim, int nthreads, int precision)
     // Iterate until relaxed to given precision
     while (true)
     {
-        relax(arr, new_values); // TODO remove once parallelised
+        // TODO for all nthreads
+        pthread_create(
+            &thread_info[0].thread_id, NULL,
+            &relax,                    &threads[0]
+        );
+        relax(arr, new_values);
 
         // Update contents of precision array
         recalc_prec_arr(arr, new_values, precision_arr);
@@ -210,8 +228,8 @@ int main (int argc, char *argv[])
 {
     /* Command line args: array filename, dimension, nthreads, precision */
     char *filename = "matrices/binmatrix";
-    int nthreads = 8;
-    int precision = 1;
+    nthreads = 8;
+    precision = 1;
 
     int c = 0;
 
@@ -235,8 +253,8 @@ int main (int argc, char *argv[])
         }
     }
     arr = read_array(filename); // set length and dim
-
-    solve(arr, dim, nthreads, precision);
+    threads = malloc(nthreads * sizeof(struct thread_info));
+    solve();
 
     return 0;
 }
