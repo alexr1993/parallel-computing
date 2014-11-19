@@ -7,20 +7,25 @@
 #include <unistd.h>
 
 /* Globals */
-int dim, length, nthreads, precision;
-float *arr;
+int dim, length, nthreads, precision, min_elements_per_thread;
+float *arr, *temp_arr, *precision_arr;
 
 pthread_barrier_t barrier;
 
-struct thread_info {
+typedef struct thread_info {
     pthread_t thread_id;
     int       thread_num;
+    int       start_ix;
+    int       end_ix;
     float     *input_arr;
     float     *output_arr;
-};
+} thread_info;
 
 struct thread_info *threads;
 
+/*
+ *
+ */
 void print_matrix(float *arr)
 {
     int i;
@@ -36,25 +41,26 @@ void print_matrix(float *arr)
 }
 
 /*
- * Reads square array of length dim from file. Ignores whitespace/newlines
+ * Checks array is square and sets the global length and dim vars
  *
- * Input matrices must contain only digits, non tab spaces, and newliens
  */
-float *read_array(char *filename)
+void validate_array(char *filename)
 {
-    // Infer dimension and check validity or matrix
+    // Determine length
     FILE *input = fopen(filename, "r");
     int character = fgetc(input);
-    length = 0;
 
+    length = 0;
     while (character != EOF)
     {
+        // Count anything that's not a space
         if ( !(character == ' ' || character == '\n'))
         {
             ++length;
         }
         character = fgetc(input);
     }
+    fclose(input);
 
     // Check array is square
     double root_of_length = sqrt((double)length);
@@ -68,7 +74,20 @@ float *read_array(char *filename)
         printf("Matrix is not square, length: %d\n", length);
         exit(1);
     }
-    fclose(input);
+    return;
+}
+
+/*
+ * Reads square array of length dim from file. Ignores whitespace/newlines
+ *
+ * Input matrices must contain only digits, non tab spaces, and newliens
+ */
+float *read_array(char *filename)
+{
+    validate_array(filename);
+
+    // Infer dimension and check validity or matrix
+    FILE *input;
 
     // Deserialize array
     arr = malloc(length * sizeof(int));
@@ -90,6 +109,9 @@ float *read_array(char *filename)
     }
 
     fclose(input);
+    printf("Successfully read matrix:\n");
+    print_matrix(arr);
+
     return arr;
 }
 
@@ -156,13 +178,13 @@ bool is_edge_index (int index, int dim)
  * Sets each element of new_values to the average of the 4 neighbours of each
  * cell in arr
  */
-void relax (float *arr, float *new_values)
+void relax (int start_ix, int end_ix, float *arr, float *new_values)
 {
     float right, left, above, below;
     int i;
 
     // Calculate new values
-    for (i = 0; i < length; ++i)
+    for (i = start_ix; i < end_ix; ++i)
     {
         // Copy over edge cells (no computation needed)
         if (is_edge_index(i, dim))
@@ -183,78 +205,163 @@ void relax (float *arr, float *new_values)
     //pthread_join(thread_id, NULL);
 }
 
-void solve (void)
+
+/*
+ * Iteratively relaxes the array until precision is met
+ *
+ * Accepts thread_info as an arg, or NULL if it's the main thread
+ */
+void solve (void *arg)
 {
-    float *precision_arr = malloc(length * sizeof(int));
-    float *new_values    = malloc(length * sizeof(int));
+
+    bool is_main_thread = false;
+
+    thread_info thread = *(thread_info *)arg;
+
+    int thread_num = thread.thread_num;
+    if (thread_num == 0) is_main_thread = true;
+
     float max_change;
 
     // Iterate until relaxed to given precision
     while (true)
     {
-        // TODO for all nthreads
-        pthread_create(
-            &thread_info[0].thread_id, NULL,
-            &relax,                    &threads[0]
-        );
-        relax(arr, new_values);
+        relax(thread.start_ix, thread.end_ix, arr, temp_arr);
+        printf("Finished relaxing elements %d to %d ",
+               thread.start_ix,
+               thread.end_ix                           );
 
-        // Update contents of precision array
-        recalc_prec_arr(arr, new_values, precision_arr);
-        max_change = get_max(precision_arr);
+        printf("(thread %d)\n", thread_num);
 
-        // Inform user
-        printf( "Max change: %.3f\nState of matrix:\n",
-                max_change                              );
+        pthread_barrier_wait(&barrier); // Wait for full relaxation
 
-        print_matrix(arr);
-
-        /* Check base condition - return if precision is high enough */
-        if ( has_met_precision(max_change, precision) )
+        if (is_main_thread)
         {
-            printf( "Precise to %d decimal place(s). Relaxation Complete!\n",
-                    precision);
-            return;
+            // Update contents of precision array
+            recalc_prec_arr(arr, temp_arr, precision_arr);
+            max_change = get_max(precision_arr);
+
+            // Inform user
+            printf( "Max change: %.3f\nState of matrix:\n",
+                    max_change                              );
+            print_matrix(arr);
+
+            /* Check base condition - return if precision is high enough */
+            if ( has_met_precision(max_change, precision) )
+            {
+                printf("Precise to %d decimal place(s). ",  precision);
+                printf("Relaxation Complete!\n");
+                return;
+            }
+            else
+            {
+                // Continue iteration
+                memcpy(arr, temp_arr, length * sizeof(float));
+            }
         }
-        else
-        {
-            // Continue iteration
-            memcpy(arr, new_values, length * sizeof(float));
-        }
+        pthread_barrier_wait(&barrier);
     }
+}
+
+/*
+ * Marks thread info with the elements it must crunch
+ */
+void assign_work(thread_info *thread)
+{
+    thread->start_ix = thread->thread_num * min_elements_per_thread;
+    thread->end_ix = thread->start_ix + min_elements_per_thread;
+
+    // The last thread picks up the remainder
+    if (thread->thread_num == nthreads - 1)
+    {
+        thread->end_ix += length % nthreads;
+    }
+    printf( "Thread %d assigned elements [%d to %d)\n",
+            thread->thread_num,
+            thread->start_ix,
+            thread->end_ix
+    );
+
+    return;
+}
+
+/*
+ * Creates n - 1 child threads then passes the main one through
+ */
+void start(void)
+{
+    pthread_barrier_init( &barrier, NULL, nthreads );
+
+    min_elements_per_thread = length / nthreads;
+    printf("Min elements per thread: %d\n", min_elements_per_thread);
+
+    int i;
+    assign_work(&threads[0]); // Give main thread first chunk
+
+    // spawn threads 1 to n - 1, 0 is reserved for the main thread
+    for (i = 1; i < nthreads; ++i)
+    {
+        threads[i].thread_num = i;
+        assign_work(&threads[i]);
+        pthread_create( &threads[i].thread_id,
+                        NULL,
+                        (void *(*)(void *))&solve,
+                        &threads[i]                );
+        printf("Created thread %d\n", i);
+
+    }
+
+    // Finally utilise the main thread too
+    printf("%d and %d\n", threads[0].start_ix, threads[0].end_ix);
+    solve((void *)&threads[0]);
 }
 
 int main (int argc, char *argv[])
 {
-    /* Command line args: array filename, dimension, nthreads, precision */
+    // Default cmd line args
     char *filename = "matrices/binmatrix";
-    nthreads = 8;
-    precision = 1;
+    nthreads       = 1;
+    precision      = 1;
 
+    // Parse args
     int c = 0;
-
-    while ((c = getopt(argc, argv, "f:p:d:")) != -1)
+    while ( (c = getopt(argc, argv, "f::p::n::")) != -1 )
     {
         switch (c)
         {
+          // filename
           case 'f':
             filename = malloc(strlen(optarg) * sizeof(char));
             strncpy(filename, optarg, strlen(optarg));
             printf("Reading matrix from file: %s\n", filename);
             break;
-
+          // precision (in decimal places)
           case 'p':
-            precision = (int) strtof(optarg, NULL);
+            precision = atoi(optarg);
             break;
-
+          // nThreads
+          case 'n':
+            nthreads = atoi(optarg);
+            break;
           default:
             printf("Invalid arg: %s\n", optarg);
             break;
         }
     }
-    arr = read_array(filename); // set length and dim
-    threads = malloc(nthreads * sizeof(struct thread_info));
-    solve();
 
+    arr           = read_array(filename); // also sets "length" and "dim"
+    temp_arr      = malloc(length * sizeof(int));
+    precision_arr = malloc(length * sizeof(int));
+
+    threads = malloc(nthreads * sizeof(struct thread_info));
+
+    printf("Beginning relaxation using ");
+    printf("threads: %d, precision: %d, file: %s\n",
+           nthreads,
+           precision,
+           filename
+    );
+
+    start();
     return 0;
 }
