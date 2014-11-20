@@ -126,11 +126,12 @@ bool has_met_precision(float max_change, int precision)
  * Set the precision array to the difference between the old and new matrix
  * values
  */
-void recalc_prec_arr(float *old_vals, float *new_vals, float *prec_arr)
+void recalc_prec_arr( int start_ix,    int end_ix, float *old_vals,
+                      float *new_vals, float *prec_arr              )
 {
     int i;
 
-    for (i = 0; i < length; ++i)
+    for (i = start_ix; i < end_ix; ++i)
     {
         prec_arr[i] = fabs(old_vals[i] - new_vals[i]);
     }
@@ -233,13 +234,19 @@ void solve (void *arg)
 
         printf("(thread %d)\n", thread_num);
 
+        // Update contents of precision array
+        recalc_prec_arr( thread.start_ix,
+                         thread.end_ix,
+                         arr,
+                         temp_arr,
+                         precision_arr    );
+
         pthread_barrier_wait(&barrier); // Wait for full relaxation
 
         if (is_main_thread)
         {
-            // Update contents of precision array
-            recalc_prec_arr(arr, temp_arr, precision_arr);
-            max_change = get_max(precision_arr);
+
+            max_change = get_max(precision_arr); // TODO parallelise reduce
 
             // Inform user
             printf( "Max change: %.3f\nState of matrix:\n",
