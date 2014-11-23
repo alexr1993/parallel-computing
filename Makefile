@@ -9,3 +9,6 @@ re:    ${OBJS}
 
 .c.o:
 	${CC} -g -Wall -c $*.c
+
+clean:
+	rm *.o;rm re
