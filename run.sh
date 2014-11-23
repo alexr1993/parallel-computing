@@ -1,11 +1,16 @@
-p_start=1
-p_end=4
+n_start=0
+n_end=16
 
-for p in `seq $p_start $p_end`;
+file="matrices/L50"
+prec=5
+
+echo "`date -u` (file $file, prec $prec)" >> out
+
+for n in `seq $n_start $n_end`;
 do
-    (time ./re -n3 -p3 -fmatrices/L500) 2>&1 > /dev/null \
+    (time ./re -n$n -p$prec -f$file) 2>&1 > /dev/null \
         | grep user \
         | awk '{ print $2 }' \
         | sed "s/^[0-9]m//" \
-        | xargs printf "$p\t%s\n" >> out
+        | xargs printf "$n\t%s\n" >> out
 done
