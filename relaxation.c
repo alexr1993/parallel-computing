@@ -6,7 +6,7 @@
 #include <string.h>
 #include <unistd.h>
 
-bool v; //verbose
+bool v, V; //verbose
 int dim, length, nthreads, precision, min_elements_per_thread;
 float *arr, *temp_arr, *precision_arr;
 
@@ -248,9 +248,10 @@ void solve (void *arg)
             max_change = get_max(precision_arr); // TODO parallelise reduce
 
             // Inform user
-            if (v) printf( "Max change: %f\nState of matrix:\n",
+            if (v) printf( "Max change: %f\n",
                            max_change                              );
-            if (v) print_matrix(arr);
+            if (V) printf("State of matrix:\n");
+            if (V) print_matrix(arr);
 
             /* Check base condition - return if precision is high enough */
             if ( has_met_precision(max_change, precision) )
@@ -321,20 +322,44 @@ void start(void)
     solve((void *)&threads[0]);
 }
 
+/* Creates an array which is all 0s apart from the edges which are 1s */
+void init_plain_matrix()
+{
+    arr = malloc(length * sizeof(float));
+    int i;
+    for (i = 0; i < length; ++i)
+    {
+        if (is_edge_index(i, dim))
+        {
+            arr[i] = 1;
+        }
+        else arr[i] = 0;
+    }
+    if (v) printf("Initiated plain matrix.\n");
+    if (v) printf("Matrix length: %d, dimension: %d\n", length, dim);
+    if (v) print_matrix(arr);
+}
+
 int main (int argc, char *argv[])
 {
     // Default cmd line args
-    char *filename = "matrices/L5";
+    char *filename = NULL;
+    dim = 50;
     nthreads       = 1;
     precision      = 1;
     v = false;
+    V = false;
 
     // Parse args
     int c = 0;
-    while ( (c = getopt(argc, argv, "f::p::n::v::")) != -1 )
+    while ( (c = getopt(argc, argv, "d::f::p::n::v::V::")) != -1 )
     {
         switch (c)
         {
+          // dimensions
+          case 'd':
+            dim = atoi(optarg);
+            break;
           // filename
           case 'f':
             filename = malloc(strlen(optarg) * sizeof(char));
@@ -348,7 +373,13 @@ int main (int argc, char *argv[])
           case 'n':
             nthreads = atoi(optarg);
             break;
+          // verbose
           case 'v':
+            v = true;
+            break;
+          // very verbose
+          case 'V':
+            V = true;
             v = true;
             break;
           default:
@@ -357,16 +388,26 @@ int main (int argc, char *argv[])
         }
     }
 
-    arr           = read_array(filename); // also sets "length" and "dim"
+    if (filename)
+    {
+        arr = read_array(filename); // also sets "length" and "dim"
+    }
+    else
+    {
+        length = dim * dim;
+        init_plain_matrix();
+    }
+
     temp_arr      = malloc(length * sizeof(int));
     precision_arr = malloc(length * sizeof(int));
 
     threads = malloc(nthreads * sizeof(struct thread_info));
 
     printf("Beginning relaxation using ");
-    printf("threads: %d, precision: %d, file: %s\n...\n",
+    printf("threads: %d, precision: %d, dim: %d, file: %s\n...\n",
            nthreads,
            precision,
+           dim,
            filename
     );
 

@@ -1,1 +1,2 @@
-=>> PBS: job killed: walltime 645 exceeded limit 600
+./run.sh: line 10: syntax error near unexpected token `\ #2'
+./run.sh: line 10: `    (time ./re -n$n -p$prec -d$dim) \ #2>&1 > /dev/null \'
