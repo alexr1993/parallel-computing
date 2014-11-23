@@ -248,7 +248,7 @@ void solve (void *arg)
             max_change = get_max(precision_arr); // TODO parallelise reduce
 
             // Inform user
-            if (v) printf( "Max change: %.3f\nState of matrix:\n",
+            if (v) printf( "Max change: %f\nState of matrix:\n",
                            max_change                              );
             if (v) print_matrix(arr);
 
@@ -324,7 +324,7 @@ void start(void)
 int main (int argc, char *argv[])
 {
     // Default cmd line args
-    char *filename = "matrices/binmatrix";
+    char *filename = "matrices/L5";
     nthreads       = 1;
     precision      = 1;
     v = false;
