@@ -1,210 +1,85 @@
-Sun Nov 23 19:29:18 UTC 2014 (dimensions 100: , prec 5)
-Sun Nov 23 19:34:30 UTC 2014 (dimensions 100: , prec 5)
-Sun Nov 23 19:34:53 UTC 2014 (dimensions 100: , prec 5)
-0	0.001s
-1	2.329s
-2	2.924s
-3	2.990s
-4	3.269s
-5	3.356s
-6	3.336s
-7	3.213s
-8	3.554s
-Sun Nov 23 19:36:39 UTC 2014 (dimensions 100: , prec 5)
-0	0.006s
-1	2.335s
-2	2.096s
-3	1.687s
-4	1.524s
-5	1.409s
-6	1.441s
-7	1.830s
-8	1.613s
-Sun Nov 23 19:42:00 UTC 2014 (dimensions 150: , prec 5)
-0	0.004s
-1	11.049s
-2	8.405s
-3	6.724s
-4	6.996s
-5	5.963s
-6	5.268s
-7	5.695s
-8	5.872s
-Sun Nov 23 20:15:02 UTC 2014 (dimensions 100: , prec 5)
-1	2.669s
-2	1.956s
-3	1.646s
-4	1.568s
-5	1.409s
-6	1.293s
-7	1.443s
-8	1.600s
-9	1.372s
-10	1.669s
-11	1.527s
-12	1.733s
-13	1.575s
-14	1.751s
-15	1.890s
-16	1.812s
-Sun Nov 23 20:16:24 UTC 2014 (dimensions 150: , prec 5)
-1	11.044s
-2	8.397s
-3	6.965s
-4	7.144s
-5	5.737s
-6	5.669s
-7	5.357s
-8	6.283s
-9	5.628s
-10	5.898s
-11	5.774s
-12	5.888s
-13	5.755s
-14	5.693s
-15	5.744s
-16	5.949s
-Sun Nov 23 20:18:38 UTC 2014 (dimensions 200: , prec 5)
-1	29.356s
-2	20.799s
-3	18.531s
-4	14.972s
-5	14.442s
-6	14.197s
-7	14.324s
-8	14.827s
-9	13.497s
-10	14.438s
-11	14.129s
-12	13.616s
-13	14.668s
-14	13.449s
-15	14.163s
-16	14.707s
-Sun Nov 23 23:36:52 UTC 2014 (dimensions 200: , prec 5)
-Sun Nov 23 23:38:03 UTC 2014 (dimensions 400: , prec 5)
-1	real
-1	4m14.051s
-1	user
-1	4m13.986s
-1	sys
-1	0m0.025s
-2	real
-2	2m37.997s
-2	user
-2	4m17.715s
-2	sys
-2	0m0.329s
-3	real
-3	2m23.997s
-3	user
-3	4m34.651s
-3	sys
-3	0m1.129s
-Mon Nov 24 00:19:25 UTC 2014 (dimensions 250: , prec 5)
-
-
-
-
-
-
-Mon Nov 24 00:23:20 UTC 2014 (dimensions 250: , prec 5)
-
-Mon Nov 24 00:26:30 UTC 2014 (dimensions 250: , prec 5)
-	real	053.480s	user	0m53.441s	sys	0m0.018s	real	045.319s	user	1m7.946s	sys	0m0.464s	real	036.997s	user	1m12.783s	sys	0m0.708s	real	033.322s	user	1m16.304s	sys	0m1.300s	real	028.963s	user	1m12.467s	sys	0m1.471s	real	028.041s	user	1m15.374s	sys	0m2.174s	real	026.295s	user	1m15.652s	sys	0m2.685s	real	026.070s	user	1m13.661s	sys	0m3.099s	real	026.201s	user	1m13.534s	sys	0m3.392s	real	027.490s	user	1m14.212s	sys	0m4.257s	real	029.317s	user	1m15.644s	sys	0m5.047s	real	028.941s	user	1m16.006s	sys	0m5.766s	real	028.455s	user	1m15.562s	sys	0m6.210s	real	028.297s	user	1m16.295s	sys	0m6.468s	real	028.567s	user	1m13.377s	sys	0m7.664s	real	027.273s	user	1m16.147s	sys	0m7.549sMon Nov 24 00:38:46 UTC 2014 (dimensions 250: , prec 5)
-	real
-	11.134s
-	user
-	1m1.113s
-	sys
-	0m0.014s
-	real
-	038.192s
-	user
-	1m1.904s
-	sys
-	0m0.210s
-	real
-	036.105s
-	user
-	1m8.277s
-	sys
-	0m0.757s
-	real
-	032.715s
-	user
-	1m11.776s
-	sys
-	0m1.049s
-	real
-	029.235s
-	user
-	1m9.820s
-	sys
-	0m1.395s
-	real
-	027.798s
-	user
-	1m11.282s
-	sys
-	0m1.813s
-	real
-	026.236s
-	user
-	1m9.925s
-	sys
-	0m2.169s
-	real
-	026.430s
-	user
-	1m10.862s
-	sys
-	0m2.597s
-	real
-	027.709s
-	user
-	1m8.530s
-	sys
-	0m2.983s
-	real
-	029.487s
-	user
-	1m10.793s
-	sys
-	0m3.583s
-	real
-	028.287s
-	user
-	1m9.726s
-	sys
-	0m4.136s
-	real
-	028.789s
-	user
-	1m9.449s
-	sys
-	0m4.467s
-	real
-	027.743s
-	user
-	1m10.588s
-	sys
-	0m5.019s
-	real
-	028.108s
-	user
-	1m9.603s
-	sys
-	0m5.247s
-	real
-	028.173s
-	user
-	1m11.651s
-	sys
-	0m5.668s
-	real
-	027.368s
-	user
-	1m11.462s
-	sys
-	0m6.071s
+Mon Nov 24 11:20:29 UTC 2014 (dimensions 50, prec 5)
+1 real 00.235s user 00.211s sys 00.002s
+2 real 00.206s user 00.250s sys 00.036s
+3 real 00.166s user 00.234s sys 00.070s
+4 real 00.160s user 00.269s sys 00.096s
+5 real 00.162s user 00.256s sys 00.131s
+6 real 00.253s user 00.264s sys 00.188s
+7 real 00.255s user 00.250s sys 00.242s
+8 real 00.349s user 00.261s sys 00.251s
+9 real 00.290s user 00.260s sys 00.291s
+10 real 00.255s user 00.333s sys 00.356s
+11 real 00.312s user 00.304s sys 00.437s
+12 real 00.380s user 00.235s sys 00.365s
+13 real 00.391s user 00.308s sys 00.491s
+14 real 00.431s user 00.281s sys 00.429s
+15 real 00.405s user 00.273s sys 00.424s
+16 real 00.432s user 00.282s sys 00.440s
+Mon Nov 24 11:21:00 UTC 2014 (dimensions 100, prec 5)
+1 real 02.683s user 02.659s sys 00.005s
+2 real 01.851s user 02.607s sys 00.036s
+3 real 01.692s user 02.957s sys 00.218s
+4 real 01.529s user 03.122s sys 00.287s
+5 real 01.833s user 03.454s sys 00.497s
+6 real 01.467s user 03.105s sys 00.514s
+7 real 01.401s user 03.020s sys 00.534s
+8 real 01.751s user 03.170s sys 00.880s
+9 real 01.503s user 03.129s sys 00.959s
+10 real 01.585s user 04.225s sys 01.087s
+11 real 01.581s user 03.329s sys 01.225s
+12 real 01.772s user 03.392s sys 01.343s
+13 real 01.685s user 03.312s sys 01.470s
+14 real 01.725s user 03.186s sys 01.601s
+15 real 01.850s user 03.257s sys 01.800s
+16 real 01.854s user 03.468s sys 01.799s
+Mon Nov 24 11:21:45 UTC 2014 (dimensions 150, prec 5)
+1 real 011.081s user 011.042s sys 00.004s
+2 real 09.631s user 011.747s sys 00.160s
+3 real 07.106s user 013.430s sys 00.322s
+4 real 06.164s user 013.044s sys 00.561s
+5 real 05.475s user 012.321s sys 00.741s
+6 real 05.245s user 012.847s sys 00.883s
+7 real 05.675s user 012.306s sys 01.113s
+8 real 05.366s user 012.698s sys 01.315s
+9 real 05.194s user 012.782s sys 01.501s
+10 real 05.616s user 012.797s sys 01.837s
+11 real 05.578s user 012.725s sys 02.086s
+12 real 05.806s user 012.390s sys 02.311s
+13 real 05.796s user 012.541s sys 02.576s
+14 real 05.562s user 013.359s sys 02.455s
+15 real 06.261s user 012.175s sys 02.782s
+16 real 05.671s user 011.589s sys 03.355s
+Mon Nov 24 11:23:54 UTC 2014 (dimensions 200, prec 5)
+1 real 029.392s user 029.352s sys 00.007s
+2 real 021.007s user 032.357s sys 00.264s
+3 real 014.348s user 029.192s sys 00.304s
+4 real 014.995s user 031.846s sys 00.835s
+5 real 015.038s user 035.158s sys 01.088s
+6 real 013.534s user 032.532s sys 01.190s
+7 real 016.189s user 033.676s sys 01.861s
+8 real 014.168s user 034.403s sys 02.079s
+9 real 013.751s user 032.588s sys 02.248s
+10 real 013.968s user 032.682s sys 02.736s
+11 real 014.453s user 032.809s sys 03.100s
+12 real 013.971s user 033.577s sys 03.500s
+13 real 014.329s user 033.873s sys 03.989s
+14 real 013.617s user 033.611s sys 03.929s
+15 real 015.568s user 032.053s sys 04.233s
+16 real 015.059s user 028.948s sys 04.332s
+Mon Nov 24 11:28:33 UTC 2014 (dimensions 250, prec 5)
+1 real 11.168s user 11.122s sys 00.017s
+2 real 045.782s user 19.785s sys 00.377s
+3 real 036.141s user 17.774s sys 00.812s
+4 real 032.799s user 111.069s sys 01.047s
+5 real 029.123s user 19.423s sys 01.424s
+6 real 027.598s user 19.264s sys 01.745s
+7 real 026.781s user 111.595s sys 02.135s
+8 real 025.938s user 111.440s sys 02.619s
+9 real 027.239s user 15.799s sys 02.950s
+10 real 027.456s user 18.975s sys 03.436s
+11 real 029.876s user 16.750s sys 04.901s
+12 real 028.850s user 110.868s sys 04.544s
+13 real 028.882s user 112.847s sys 04.985s
+14 real 027.911s user 19.573s sys 05.177s
+15 real 027.482s user 111.153s sys 05.497s
+16 real 027.521s user 111.246s sys 05.999s
