@@ -394,6 +394,7 @@ int main (int argc, char *argv[])
     }
     else
     {
+        printf("Generating matrix as no filename given");
         length = dim * dim;
         init_plain_matrix();
     }
