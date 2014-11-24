@@ -13,6 +13,9 @@ float *arr, *temp_arr, *precision_arr;
 
 pthread_barrier_t barrier;
 
+/* Contains a threads data, notably start_ix and end_ix to designate areas of
+ * the arrays to work on
+ */
 typedef struct thread_info {
     pthread_t thread_id;
     int       thread_num;
@@ -25,10 +28,11 @@ typedef struct thread_info {
 struct thread_info *threads;
 
 /*
- *
+ * Sequentially prints matrix
  */
 void print_matrix(float *arr)
 {
+    printf("\n");
     int i;
     for (i = 0; i < length; ++i)
     {
@@ -38,7 +42,7 @@ void print_matrix(float *arr)
             printf("\n");
         }
     }
-    printf("\n\n");
+    printf("\n");
 }
 
 /*
@@ -221,11 +225,13 @@ void solve (void *arg)
     while (true)
     {
         relax(thread.start_ix, thread.end_ix, arr, temp_arr);
-        if (v) printf("Finished averaging elements %d to %d ",
-                     thread.start_ix,
-                     thread.end_ix                             );
 
-        if (v) printf("(thread %d)\n", thread_num);
+        if (v) printf(
+            "Finished averaging elements %d to %d (thread %d)\n",
+            thread.start_ix,
+            thread.end_ix,
+            thread_num
+        );
 
         // Update contents of precision array
         recalc_prec_arr( thread.start_ix,
@@ -248,28 +254,38 @@ void solve (void *arg)
                 if (V)
                     printf("============================================\n\n");
 
-                printf( "Max change: %f\n", max_change );
-            }
+                printf( "\nMax change: %f (Precision requested: %f)\n",
+                        max_change, precision );
 
-            if (V) printf("State of matrix:\n");
-            if (V) print_matrix(arr);
+            }
 
             /* Check base condition - return if precision is high enough */
             if (max_change < precision)
             {
-                printf("Relaxation Complete!\n");
-                printf("Maximum change in last iteration was less than %f.\n",
-                       precision);
+                if (!v) // prevent informing twice in verbose mode
+                    printf("Max change: %f\n", max_change);
+
+                printf("\nRelaxation Complete!\n");
+
+                if (v) print_matrix(arr);
                 return;
             }
             else
             {
                 // Continue iteration
                 memcpy(arr, temp_arr, length * sizeof(float));
+
+                /* Verboseness */
                 if (v)
                 {
+                    if (V)
+                    {
+                        printf("\nState of matrix:\n");
+                        print_matrix(arr);
+                    }
                     printf("\nPrecision Not Reached - Iterating\n");
-                    if (V) printf("=================================\n\n");
+                    if (V) printf("=================================\n");
+                    printf("\n");
                 }
             }
         }
@@ -306,6 +322,7 @@ void start(void)
     pthread_barrier_init( &barrier, NULL, nthreads );
 
     min_elements_per_thread = length / nthreads;
+
     if (V) printf("\nAssigning Work and Starting Parallel Section\n");
     if (V) printf("============================================\n\n");
     if (v) printf("Min elements per thread: %d\n\n", min_elements_per_thread);
@@ -375,7 +392,7 @@ int main (int argc, char *argv[])
             break;
           // precision
           case 'p':
-            precision = atoi(optarg);
+            precision = atof(optarg);
             break;
           // nThreads
           case 'n':

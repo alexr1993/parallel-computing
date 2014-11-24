@@ -1,7 +1,7 @@
 n_start=1
-n_end=16
-dim=250
-prec=5
+n_end=2
+dim=50
+prec=0.001
 
 echo "`date -u` (dimensions $dim, prec $prec)" >> out
 

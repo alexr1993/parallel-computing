@@ -83,3 +83,9 @@ Mon Nov 24 11:28:33 UTC 2014 (dimensions 250, prec 5)
 14 real 027.911s user 19.573s sys 05.177s
 15 real 027.482s user 111.153s sys 05.497s
 16 real 027.521s user 111.246s sys 05.999s
+Mon Nov 24 15:10:04 UTC 2014 (dimensions 50, prec 0.00001)
+Mon Nov 24 15:10:57 UTC 2014 (dimensions 50, prec 0.001)
+Mon Nov 24 15:11:22 UTC 2014 (dimensions 50, prec 0.001)
+Mon Nov 24 15:12:05 UTC 2014 (dimensions 50, prec 0.001)
+1 real 00.067s user 00.038s sys 00.000s
+2 real 00.049s user 00.039s sys 00.009s
