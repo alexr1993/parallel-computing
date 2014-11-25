@@ -7,7 +7,7 @@
 #include <unistd.h>
 
 bool v, V; //verbose
-int dim, length, nthreads, min_elements_per_thread;
+int dim, length, nthreads, min_elements_per_thread, iter_counter;
 float precision;
 float *arr, *temp_arr, *precision_arr;
 
@@ -244,13 +244,15 @@ void solve (void *arg)
 
         if (is_main_thread)
         {
+            ++iter_counter;
 
             max_change = get_max(precision_arr); // TODO parallelise reduce
 
             // Inform user
             if (v)
             {
-                printf("\nIteration Complete - Checking Exit Condition\n");
+                printf("\nIteration %d Complete - Checking Exit Condition\n",
+                       iter_counter);
                 if (V)
                     printf("============================================\n\n");
 
@@ -265,7 +267,8 @@ void solve (void *arg)
                 if (!v) // prevent informing twice in verbose mode
                     printf("Max change: %f\n", max_change);
 
-                printf("\nRelaxation Complete!\n");
+                printf("\nRelaxation Complete (%d Iterations)!\n",
+                       iter_counter);
 
                 if (v) print_matrix(arr);
                 return;
@@ -425,6 +428,7 @@ int main (int argc, char *argv[])
     }
 
     /* Initialise and allocate */
+    iter_counter  = 0;
     temp_arr      = malloc(length * sizeof(int));
     precision_arr = malloc(length * sizeof(int));
 
