@@ -6,7 +6,7 @@ gnuplot <<- END
 
     set title '$1'
     set xlabel "Matrix Size"
-    set ylabel "Speedup"
+    set ylabel "Wall Time"
 
 
     plot '$file' using 1:2:3:4 with errorbars t 'range', \
