@@ -36,4 +36,4 @@ high=$(bc <<< "scale = 10; $seqtime_high / ${times_arr[4]}")
 
 echo "(low: $low avg: $avg high: $high)"
 echo "Ran on $nthreads threads, storing in $out_file"
-#echo "$dim $avg $low $high" >>$out_file
+echo "$dim $avg $low $high" >>$out_file
