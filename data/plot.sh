@@ -6,12 +6,13 @@ gnuplot <<- END
 
     set title '$1'
     set xlabel "Number of Threads"
-    set ylabel "Time"
+    set ylabel "Wall Time"
 
-    set xtic autofreq
-    set ytic autofreq
 
-    plot '$file' using 1:2 with linespoints t 'real',\
-         '$file' using 1:3 with linespoints t 'user',\
-         '$file' using 1:4 with linespoints t 'sys'
+    plot '$file' using 1:2:3:4 with errorbars t 'range', \
+        '$file' using 1:2 with lines t 'median'
 END
+
+#         '$file' using 1:3 with linespoints t 'user',\
+#         '$file' using 1:4 with linespoints t 'sys'
+#END

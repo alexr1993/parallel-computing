@@ -1,8 +1,8 @@
 #!/bin/bash
 
 d=${1:-"20"}
-p=${2:-"0.0001"}
-n=${3:-"4"}
+n=${2:-"4"}
+p=${3:-"0.0001"}
 times=${4:-"20"}
 
 echo "If no suspected race conditions/transient errors are found, only the \
