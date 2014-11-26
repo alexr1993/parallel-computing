@@ -4,4 +4,4 @@
 #PBS -e stderr
 
 #PBS -l nodes=1:ppn=8
-./run.sh 900 0.0001
+./run.sh 600 0.0001

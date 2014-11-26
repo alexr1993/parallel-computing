@@ -6,6 +6,8 @@ default_p=0.0001
 d=${1:-$default_d}
 p=${2:-$default_p}
 
+make
+
 #output_tsv="data/${d}dim${p}prec"
 echo "`date -u` (dimensions $d, prec $p)" >> out
 
