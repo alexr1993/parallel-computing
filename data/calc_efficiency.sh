@@ -7,7 +7,7 @@ do
         low=$(head threadavg/${d}dim.dat -n1 | cut -d ' ' -f3)
         high=$(head threadavg/${d}dim.dat -n1 | cut -d ' ' -f4)
         echo "avg: $avg, low: $low, high: $high"
-        ./speedup.sh $n $d $avg $low $high
+        ./efficiency.sh $n $d $avg $low $high
     done
 done
 

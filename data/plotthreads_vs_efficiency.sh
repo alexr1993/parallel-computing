@@ -1,10 +1,10 @@
 gnuplot <<- END
     set term png
-    set output 'nthreads_vs_speedup.png'
+    set output 'nthreads_vs_efficiency.png'
 
-    set title 'Number of Threads vs Speedup'
+    set title 'Number of Threads vs Efficiency'
     set xlabel "Number of Threads"
-    set ylabel "Speedup"
+    set ylabel "Efficiency"
 
     plot '100dim.dat' using 1:2 with lines t '100 dims', \
          '200dim.dat' using 1:2 with lines t '200 dims', \

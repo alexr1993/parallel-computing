@@ -1,7 +1,5 @@
-# This script is for translating time based results to speedup ones
+# This script is for translating time based results to efficiency ones
 
-# for n in `seq 1 16`; do for d in `seq 100 100 600`; do
-#./speedup.sh $n $d; done; done
 
 nthreads=$1
 dim=$2
@@ -21,7 +19,7 @@ times=`grep -r "^$nthreads " . \
 
 
 times_arr=($times)
-out_file="threadavg/threadsvsspeedup/${dim}dim.dat"
+out_file="threadsvsefficiency/${dim}dim.dat"
 
 if [[ ${#times_arr[@]} -ne $nresults ]]; then
     echo "More than 5 results found: $times"
@@ -32,9 +30,9 @@ fi
 echo "(n: $nthreads, d: $dim) $times"
 
 # Speedup = time in sequential / time in parallel
-avg=$(bc<<< "scale = 10; $seqtime_avg / ${times_arr[2]}")
-low=$(bc <<< "scale = 10; $seqtime_low / ${times_arr[0]}")
-high=$(bc <<< "scale = 10; $seqtime_high / ${times_arr[4]}")
+avg=$(bc<<< "scale = 10; $seqtime_avg / (${times_arr[2]} * $nthreads)")
+low=$(bc <<< "scale = 10; $seqtime_low / (${times_arr[0]} * $nthreads)")
+high=$(bc <<< "scale = 10; $seqtime_high / (${times_arr[4]} * $nthreads) ")
 
 # Write the relevant info to outfile
 echo "(low: $low avg: $avg high: $high)"
