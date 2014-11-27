@@ -1,3 +1,5 @@
+# This script is for translating time based results to speedup ones
+
 # for n in `seq 1 16`; do for d in `seq 100 100 600`; do
 #./speedup.sh $n $d; done; done
 
@@ -19,7 +21,7 @@ times=`grep -r "^$nthreads " . \
 
 
 times_arr=($times)
-out_file="matavg/${nthreads}threads.dat"
+out_file="threadsavg/threadsvsspeedup/${dim}dim.dat"
 
 if [[ ${#times_arr[@]} -ne $nresults ]]; then
     echo "More than 5 results found: $times"
