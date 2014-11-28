@@ -1,15 +1,15 @@
-OBJS = relaxation.o
-SRCS = relaxation.c
-CC = gcc
+OBJS = hellompi.o
+SRCS = hellompi.c
+CC = mpicc
 
 all: re
 
 re:    ${OBJS}
-	${CC} -g -Wall -o re ${OBJS} -lpthread -lm
+	${CC} -o re ${OBJS} -lm -lmpi
 
 .c.o:
 	${CC} -g -Wall -c $*.c
 
 clean:
-	rm *.o;rm re
+	rm *.o re
 
