@@ -1,36 +1,4 @@
-This is a slave! (process 1 of 8)
-This is a slave! (process 6 of 8)
-This is a slave! (process 4 of 8)
-This is a slave! (process 2 of 8)
-This is the master! (process 0 of 8)
-Generating matrix as no filename given.
-
-
-1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 
-
-Sending 10 to process 1
-Sending 10 to process 2
-Sending 10 to process 3
-This thread will have 10 rows to receive!
-Sending 10 to process 4
-Sending 10 to process 5
-Sending 10 to process 6
-Sending 10 to process 7
-This thread will have 10 rows to receive!
-This thread will have 10 rows to receive!
-This thread will have 10 rows to receive!
-This is a slave! (process 5 of 8)
-This thread will have 10 rows to receive!
-This is a slave! (process 3 of 8)
-This is a slave! (process 7 of 8)
-This thread will have 10 rows to receive!
-This thread will have 10 rows to receive!
+mpicc -g -Wall -c hellompi.c
+mpicc -g -Wall -c relaxation.c
+mpicc -g -Wall -c util.c
+mpicc -o re hellompi.o relaxation.o util.o -lm -lmpi

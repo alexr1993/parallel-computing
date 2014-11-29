@@ -1170,3 +1170,40 @@ Wed Nov 26 22:18:38 UTC 2014 (dimensions 50, prec 0.0001)
 14 0.270 0.131 0.281
 15 0.324 0.150 0.383
 16 0.304 0.175 0.322
+8 total processes failed to start
+This is a slave! (process 2 of 8)
+This is a slave! (process 1 of 8)
+This is a slave! (process 7 of 8)
+This is a slave! (process 6 of 8)
+This is a slave! (process 3 of 8)
+This is the master! (process 0 of 8)
+Generating matrix as no filename given.
+
+
+1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 
+
+Sending 10 to process 1
+Sending 10 to process 2
+This thread will have 10 rows to receive!
+This thread will have 10 rows to receive!
+This is a slave! (process 4 of 8)
+Sending 10 to process 3
+Sending 10 to process 4
+Sending 10 to process 5
+Sending 10 to process 6
+Sending 10 to process 7
+This thread will have 10 rows to receive!
+This thread will have 10 rows to receive!
+This thread will have 10 rows to receive!
+This thread will have 10 rows to receive!
+This is a slave! (process 5 of 8)
+This thread will have 10 rows to receive!
