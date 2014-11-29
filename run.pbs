@@ -2,7 +2,7 @@
 #PBS -N relaxation_ajr36
 #PBS -o stdout
 #PBS -e stderr
-#PBS -l nodes=2:ppn=8
+#PBS -l nodes=1:ppn=8
 
-mpirun -np $PBS_NP -machinefile $PBS_NODEFILE ./re
+mpirun -np $PBS_NP -machinefile $PBS_NODEFILE ./re -d10
 

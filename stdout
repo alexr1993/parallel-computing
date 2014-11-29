@@ -1,16 +1,36 @@
-Hello world from process 0 of 16
-Hello world from process 1 of 16
-Hello world from process 3 of 16
-Hello world from process 15 of 16
-Hello world from process 13 of 16
-Hello world from process 11 of 16
-Hello world from process 6 of 16
-Hello world from process 2 of 16
-Hello world from process 5 of 16
-Hello world from process 10 of 16
-Hello world from process 12 of 16
-Hello world from process 14 of 16
-Hello world from process 8 of 16
-Hello world from process 9 of 16
-Hello world from process 7 of 16
-Hello world from process 4 of 16
+This is a slave! (process 1 of 8)
+This is a slave! (process 6 of 8)
+This is a slave! (process 4 of 8)
+This is a slave! (process 2 of 8)
+This is the master! (process 0 of 8)
+Generating matrix as no filename given.
+
+
+1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 
+
+Sending 10 to process 1
+Sending 10 to process 2
+Sending 10 to process 3
+This thread will have 10 rows to receive!
+Sending 10 to process 4
+Sending 10 to process 5
+Sending 10 to process 6
+Sending 10 to process 7
+This thread will have 10 rows to receive!
+This thread will have 10 rows to receive!
+This thread will have 10 rows to receive!
+This is a slave! (process 5 of 8)
+This thread will have 10 rows to receive!
+This is a slave! (process 3 of 8)
+This is a slave! (process 7 of 8)
+This thread will have 10 rows to receive!
+This thread will have 10 rows to receive!
