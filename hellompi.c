@@ -15,7 +15,7 @@
 #define ROOT_PROCESS 0
 
 bool v, V; //verbose
-int dim, length, nprocesses, min_elements_per_process, iter_counter, rank, rc;
+int dim = 0, length = 0, nprocesses, min_elements_per_process, iter_counter, rank, rc;
 float precision;
 float *arr, *new_values_arr, *precision_arr, *incoming_arr;
 
@@ -35,25 +35,25 @@ void assign_work(void) {
                 min_elements_per_process);
 
   for (i = 1; i < nprocesses; ++i) {
-    printf("Sending %d to process %d\n", dim, i);
     // Send array length
     MPI_Send( &dim, 1,             MPI_INT,
-              i,       send_data_tag, MPI_COMM_WORLD );
+              i,    send_data_tag, MPI_COMM_WORLD );
 
-    printf("Sending array of length: %d and dim: %d...\n", length, dim);
-    print_matrix(arr, length, dim);
+    printf("Sending array of length: %d and dim: %d to process %d...\n",
+          length, dim, i);
+
     // Send matrix (array)
-    MPI_Send( &arr[0], length, MPI_FLOAT, i, send_data_tag, MPI_COMM_WORLD );
+    MPI_Send( arr, length, MPI_FLOAT, i, send_data_tag, MPI_COMM_WORLD );
   }
 }
 
 /*
+ * (Slave)
  * MPI_Recv's an array length and an array
  * TODO Separate into slave_init and receive_work
  */
 void receive_work(void) {
   MPI_Status status;
-
   printf("Slave process receiving work...\n");
 
   // Receive array size
@@ -62,18 +62,17 @@ void receive_work(void) {
             &status );
 
   length = dim * dim;
-
-  printf("This thread will have %d rows to receive!\n",
-         length);
-
   incoming_arr = malloc(length * sizeof(float));
-  MPI_Recv( &incoming_arr, length, MPI_FLOAT,
+
+  MPI_Recv( incoming_arr, length, MPI_FLOAT,
             ROOT_PROCESS, send_data_tag, MPI_COMM_WORLD,
             &status );
   printf("Matrix received too\n");
 
-  /* Print to check */
-  print_matrix(incoming_arr, length, dim);
+  /* Print some received data to check */
+  printf("This thread will have %d cells to receive! (Top left is %f)\n",
+         length,
+         incoming_arr[0]);
 }
 
 void parse_args(int argc, char *argv[]) {
@@ -124,6 +123,7 @@ void parse_args(int argc, char *argv[]) {
     length = dim * dim;
     arr = create_plain_matrix(length, dim);
   }
+  free(filename);
 }
 
 int main (int argc, char *argv[]) {
