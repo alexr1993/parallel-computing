@@ -1,4 +1,1 @@
-mpicc -g -Wall -c hellompi.c
-mpicc -g -Wall -c relaxation.c
-mpicc -g -Wall -c util.c
-mpicc -o re hellompi.o relaxation.o util.o -lm -lmpi
+make: Nothing to be done for `all'.

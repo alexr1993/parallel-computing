@@ -12,11 +12,12 @@
 
 #define send_data_tag 2001
 #define return_data_tag 2002
+#define ROOT_PROCESS 0
 
 bool v, V; //verbose
-int dim, length, nprocesses, min_elements_per_process, iter_counter;
+int dim, length, nprocesses, min_elements_per_process, iter_counter, rank, rc;
 float precision;
-float *arr, *new_values_arr, *precision_arr;
+float *arr, *new_values_arr, *precision_arr, *incoming_arr;
 
 struct process_data;
 
@@ -25,42 +26,66 @@ struct process_data;
  */
 void assign_work(void) {
   /* (For now) send the whole array to each processes */
-  int i, nrows_to_send = dim;
+  int i;
+  min_elements_per_process = length / nprocesses;
+
+  if (V) printf("\nAssigning Work and Starting Parallel Section\n");
+  if (V) printf("============================================\n\n");
+  if (v) printf("Min elements per process: %d\n\n",
+                min_elements_per_process);
+
   for (i = 1; i < nprocesses; ++i) {
-    printf("Sending %d to process %d\n", nrows_to_send, i);
-    MPI_Send( &nrows_to_send, 1,             MPI_INT,
-              i,              send_data_tag, MPI_COMM_WORLD );
+    printf("Sending %d to process %d\n", dim, i);
+    // Send array length
+    MPI_Send( &dim, 1,             MPI_INT,
+              i,       send_data_tag, MPI_COMM_WORLD );
+
+    printf("Sending array of length: %d and dim: %d...\n", length, dim);
+    print_matrix(arr, length, dim);
+    // Send matrix (array)
+    MPI_Send( &arr[0], length, MPI_FLOAT, i, send_data_tag, MPI_COMM_WORLD );
   }
 }
 
-/* Creates an array which is all 0s apart from the edges which are 1s */
-void init_plain_matrix() {
-  arr = malloc(length * sizeof(float));
+/*
+ * MPI_Recv's an array length and an array
+ * TODO Separate into slave_init and receive_work
+ */
+void receive_work(void) {
+  MPI_Status status;
 
-  int i;
-  for (i = 0; i < length; ++i) {
-    // Set the edges to 1 and everything else to 0
-    if (is_edge_index(i, dim)) {
-      arr[i] = 1;
-    } else {
-      arr[i] = 0;
-    }
-  }
-  if (v) printf("Initiated plain matrix:\n");
-  if (v) printf("Matrix length: %d, dimension: %d\n\n", length, dim);
-  if (v) print_matrix(arr, length, dim);
+  printf("Slave process receiving work...\n");
+
+  // Receive array size
+  MPI_Recv( &dim,         1,              MPI_INT,
+            ROOT_PROCESS, send_data_tag,  MPI_COMM_WORLD,
+            &status );
+
+  length = dim * dim;
+
+  printf("This thread will have %d rows to receive!\n",
+         length);
+
+  incoming_arr = malloc(length * sizeof(float));
+  MPI_Recv( &incoming_arr, length, MPI_FLOAT,
+            ROOT_PROCESS, send_data_tag, MPI_COMM_WORLD,
+            &status );
+  printf("Matrix received too\n");
+
+  /* Print to check */
+  print_matrix(incoming_arr, length, dim);
 }
 
 void parse_args(int argc, char *argv[]) {
 
-  // Default cmd line args
+  /* Set Default Args */
   char *filename = NULL;
   dim = 50;
   precision  = 0.1;
   v = false;
   V = false;
 
-  // Parse args
+  /* Parse Args */
   int c = 0;
   while ( (c = getopt(argc, argv, "d::f::p::n::v::V::")) != -1 ) {
     switch(c) {
@@ -91,19 +116,17 @@ void parse_args(int argc, char *argv[]) {
         break;
     }
   }
-
+  /* Initialise Matrix */
   if (filename) {
     arr = read_array(filename, &length, &dim);
   } else {
     printf("Generating matrix as no filename given.\n\n");
     length = dim * dim;
-    init_plain_matrix();
+    arr = create_plain_matrix(length, dim);
   }
 }
 
 int main (int argc, char *argv[]) {
-
-  int rank, rc;
 
   rc = MPI_Init(&argc, &argv); // Starts MPI
 
@@ -116,33 +139,19 @@ int main (int argc, char *argv[]) {
   MPI_Comm_rank(MPI_COMM_WORLD, &rank); // Get current process id
   MPI_Comm_size(MPI_COMM_WORLD, &nprocesses); // Get number of processes
 
-  int root_process = 0;
-  if (rank == root_process) {
+  if (rank == ROOT_PROCESS) {
+
+    printf("\nSTARTING PROGRAM\n");
+    printf("================\n\n");
 
     /* Branch for master and slave execution */
     printf("This is the master! (process %d of %d)\n", rank, nprocesses);
     parse_args(argc, argv);
-    print_matrix(arr, length, dim);
-    min_elements_per_process = length / nprocesses;
-
-    if (V) printf("\nAssigning Work and Starting Parallel Section\n");
-    if (V) printf("============================================\n\n");
-    if (v) printf("Min elements per process: %d\n\n",
-                  min_elements_per_process);
-
     assign_work();
   } else {
     /* Slave process execution */
     printf("This is a slave! (process %d of %d)\n", rank, nprocesses);
-    MPI_Status status;
-    int nrows_to_receive;
-
-    rc = MPI_Recv( &nrows_to_receive, 1, MPI_INT,
-                   root_process,      send_data_tag, MPI_COMM_WORLD,
-                   &status );
-
-    printf("This thread will have %d rows to receive!\n",
-           nrows_to_receive);
+    receive_work();
   }
 
   MPI_Finalize();

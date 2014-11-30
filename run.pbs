@@ -5,5 +5,5 @@
 #PBS -l nodes=1:ppn=8
 
 make
-mpirun -np $PBS_NP -machinefile $PBS_NODEFILE ./re -d10 >> out
+mpirun -np $PBS_NP -machinefile $PBS_NODEFILE ./re -V -d10 >> out
 

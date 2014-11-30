@@ -103,3 +103,25 @@ float *read_array(float *arr, char *filename, int *length, int *dim) {
 
   return arr;
 }
+
+/* Creates an array which is all 0s apart from the edges which are 1s */
+float *create_plain_matrix(int length, int dim) {
+  float *arr = malloc(length * sizeof(float));
+
+  int i;
+  for (i = 0; i < length; ++i) {
+    // Set the edges to 1 and everything else to 0
+    if (is_edge_index(i, dim)) {
+      arr[i] = 1;
+    } else {
+      arr[i] = 0;
+    }
+  }
+  if (v) printf("Initiated plain matrix:\n");
+  if (v) printf("Matrix length: %d, dimension: %d\n\n", length, dim);
+  if (v) print_matrix(arr, length, dim);
+
+  return arr;
+}
+
+

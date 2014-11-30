@@ -1,0 +1,80 @@
+[node016:14446] *** Process received signal ***
+[node016:14446] Signal: Segmentation fault (11)
+[node016:14446] Signal code:  (128)
+[node016:14446] Failing at address: (nil)
+[node016:14447] *** Process received signal ***
+[node016:14447] Signal: Segmentation fault (11)
+[node016:14447] Signal code:  (128)
+[node016:14447] Failing at address: (nil)
+[node016:14448] *** Process received signal ***
+[node016:14448] Signal: Segmentation fault (11)
+[node016:14448] Signal code:  (128)
+[node016:14448] Failing at address: (nil)
+[node016:14450] *** Process received signal ***
+[node016:14450] Signal: Segmentation fault (11)
+[node016:14450] Signal code:  (128)
+[node016:14450] Failing at address: (nil)
+[node016:14451] *** Process received signal ***
+[node016:14451] Signal: Segmentation fault (11)
+[node016:14451] Signal code:  (128)
+[node016:14451] Failing at address: (nil)
+[node016:14452] *** Process received signal ***
+[node016:14452] Signal: Segmentation fault (11)
+[node016:14452] Signal code:  (128)
+[node016:14452] Failing at address: (nil)
+[node016:14447] [ 0] /lib64/libpthread.so.0 [0x2aaaabb2fb70]
+[node016:14447] [ 1] ./re(print_matrix+0x32) [0x401cca]
+[node016:14447] [ 2] ./re(receive_work+0xe1) [0x401639]
+[node016:14447] [ 3] ./re(main+0xd0) [0x40188f]
+[node016:14447] [ 4] /lib64/libc.so.6(__libc_start_main+0xf4) [0x2aaaabd59994]
+[node016:14447] [ 5] ./re [0x401369]
+[node016:14447] *** End of error message ***
+[node016:14449] *** Process received signal ***
+[node016:14449] Signal: Segmentation fault (11)
+[node016:14449] Signal code:  (128)
+[node016:14449] Failing at address: (nil)
+[node016:14446] [ 0] /lib64/libpthread.so.0 [0x2aaaabb2fb70]
+[node016:14446] [ 1] ./re(print_matrix+0x32) [0x401cca]
+[node016:14446] [ 2] ./re(receive_work+0xe1) [0x401639]
+[node016:14446] [ 3] ./re(main+0xd0) [0x40188f]
+[node016:14446] [ 4] /lib64/libc.so.6(__libc_start_main+0xf4) [0x2aaaabd59994]
+[node016:14446] [ 5] ./re [0x401369]
+[node016:14446] *** End of error message ***
+[node016:14448] [ 0] /lib64/libpthread.so.0 [0x2aaaabb2fb70]
+[node016:14448] [ 1] ./re(print_matrix+0x32) [0x401cca]
+[node016:14448] [ 2] ./re(receive_work+0xe1) [0x401639]
+[node016:14448] [ 3] ./re(main+0xd0) [0x40188f]
+[node016:14448] [ 4] /lib64/libc.so.6(__libc_start_main+0xf4) [0x2aaaabd59994]
+[node016:14448] [ 5] ./re [0x401369]
+[node016:14448] *** End of error message ***
+[node016:14450] [ 0] /lib64/libpthread.so.0 [0x2aaaabb2fb70]
+[node016:14450] [ 1] ./re(print_matrix+0x32) [0x401cca]
+[node016:14450] [ 2] ./re(receive_work+0xe1) [0x401639]
+[node016:14450] [ 3] ./re(main+0xd0) [0x40188f]
+[node016:14450] [ 4] /lib64/libc.so.6(__libc_start_main+0xf4) [0x2aaaabd59994]
+[node016:14450] [ 5] ./re [0x401369]
+[node016:14450] *** End of error message ***
+[node016:14451] [ 0] /lib64/libpthread.so.0 [0x2aaaabb2fb70]
+[node016:14451] [ 1] ./re(print_matrix+0x32) [0x401cca]
+[node016:14451] [ 2] ./re(receive_work+0xe1) [0x401639]
+[node016:14451] [ 3] ./re(main+0xd0) [0x40188f]
+[node016:14451] [ 4] /lib64/libc.so.6(__libc_start_main+0xf4) [0x2aaaabd59994]
+[node016:14451] [ 5] ./re [0x401369]
+[node016:14451] *** End of error message ***
+[node016:14449] [ 0] /lib64/libpthread.so.0 [0x2aaaabb2fb70]
+[node016:14449] [ 1] ./re(print_matrix+0x32) [0x401cca]
+[node016:14449] [ 2] ./re(receive_work+0xe1) [0x401639]
+[node016:14449] [ 3] ./re(main+0xd0) [0x40188f]
+[node016:14449] [ 4] /lib64/libc.so.6(__libc_start_main+0xf4) [0x2aaaabd59994]
+[node016:14449] [ 5] ./re [0x401369]
+[node016:14449] *** End of error message ***
+[node016:14452] [ 0] /lib64/libpthread.so.0 [0x2aaaabb2fb70]
+[node016:14452] [ 1] ./re(print_matrix+0x32) [0x401cca]
+[node016:14452] [ 2] ./re(receive_work+0xe1) [0x401639]
+[node016:14452] [ 3] ./re(main+0xd0) [0x40188f]
+[node016:14452] [ 4] /lib64/libc.so.6(__libc_start_main+0xf4) [0x2aaaabd59994]
+[node016:14452] [ 5] ./re [0x401369]
+[node016:14452] *** End of error message ***
+--------------------------------------------------------------------------
+mpirun noticed that process rank 3 with PID 14448 on node node016 exited on signal 11 (Segmentation fault).
+--------------------------------------------------------------------------
