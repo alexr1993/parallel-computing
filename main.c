@@ -21,6 +21,8 @@ float precision;
 float *arr, *new_values_arr, *precision_arr, *incoming_arr;
 
 struct process_data;
+struct process_data p_data;
+struct process_data *process_data_arr;
 
 /*
  * Sends processes their array indices
@@ -35,8 +37,21 @@ void assign_work(void) {
   if (v) printf("Min elements per process: %d\n\n",
                 min_elements_per_process);
 
+  /* Send matrix to processes */
+  /* Send processes their work spec (start and end indexes) */
+  int start_ix, end_ix;
+
   for (i = 1; i < nprocesses; ++i) {
     send_matrix(dim, arr, i);
+
+    start_ix = i * nprocesses;
+    end_ix = start_ix + min_elements_per_process;
+
+    // Give leftovers to last process
+    if (i == nprocesses - 1) {
+      end_ix += length % nprocesses;
+    }
+    send_process_data(start_ix, end_ix, i);
   }
 }
 
@@ -52,6 +67,9 @@ void receive_work(void) {
 
   /* Print some received data to check */
   if (rank == 1) print_matrix(arr, length, dim);
+
+  int start_ix, end_ix;
+  receive_process_data(&start_ix, &end_ix);
 }
 
 void parse_args(int argc, char *argv[]) {
@@ -104,9 +122,24 @@ void parse_args(int argc, char *argv[]) {
   }
   free(filename);
 }
+void init(int argc, char *argv[]);
+void run_master(int argc, char *argv[]);
+void run_slave(void);
 
 int main (int argc, char *argv[]) {
 
+  init(argc, argv);
+  if (rank == ROOT_PROCESS) {
+    run_master(argc, argv);
+  } else {
+    run_slave();
+  }
+
+  MPI_Finalize();
+  return 0;
+}
+
+void init(int argc, char *argv[]) {
   rc = MPI_Init(&argc, &argv); // Starts MPI
 
   /* Check successful startup */
@@ -117,22 +150,20 @@ int main (int argc, char *argv[]) {
 
   MPI_Comm_rank(MPI_COMM_WORLD, &rank); // Get current process id
   MPI_Comm_size(MPI_COMM_WORLD, &nprocesses); // Get number of processes
+}
 
-  if (rank == ROOT_PROCESS) {
+void run_master(int argc, char *argv[]) {
+  printf("\nSTARTING MASTER EXECUTION\n");
+  printf("================\n\n");
 
-    printf("\nSTARTING PROGRAM\n");
-    printf("================\n\n");
+  /* Branch for master and slave execution */
+  printf("This is the master! (process %d of %d)\n", rank, nprocesses);
+  parse_args(argc, argv);
+  assign_work();
+}
 
-    /* Branch for master and slave execution */
-    printf("This is the master! (process %d of %d)\n", rank, nprocesses);
-    parse_args(argc, argv);
-    assign_work();
-  } else {
-    /* Slave process execution */
-    printf("This is a slave! (process %d of %d)\n", rank, nprocesses);
-    receive_work();
-  }
-
-  MPI_Finalize();
-  return 0;
+void run_slave(void) {
+  /* Slave process execution */
+  printf("This is a slave! (process %d of %d)\n", rank, nprocesses);
+  receive_work();
 }

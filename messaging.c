@@ -39,3 +39,18 @@ float *receive_matrix(int *length, int *dim) {
   return data;
 }
 
+void send_process_data(int start_ix, int end_ix, int rank) {
+  int indexes[2] = { start_ix, end_ix };
+  if (V) printf("Sending [%d, %d] to process %d.\n", start_ix, end_ix, rank);
+  MPI_Send(indexes, 2, MPI_INT, rank, send_data_tag, MPI_COMM_WORLD);
+}
+
+void receive_process_data(int *start_ix_ptr, int *end_ix_ptr) {
+  int indexes[2] = { 0, 0 };
+  MPI_Status status;
+  MPI_Recv(indexes, 2, MPI_INT, ROOT_PROCESS, send_data_tag, MNPI_COMM_WORLD,
+           &status);
+
+  *start_ix_ptr = indexes[0];
+  *end_ix_ptr = indexes[1];
+}
