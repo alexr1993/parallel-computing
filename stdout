@@ -1,2 +1,2 @@
 mpicc -g -Wall -c hellompi.c
-mpicc -o re hellompi.o relaxation.o util.o -lm -lmpi
+mpicc -o re hellompi.o relaxation.o util.o messaging.o -lm -lmpi

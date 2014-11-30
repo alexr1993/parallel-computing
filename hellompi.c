@@ -9,6 +9,7 @@
 
 #include "util.h"
 #include "relaxation.h"
+#include "messaging.h"
 
 #define send_data_tag 2001
 #define return_data_tag 2002
@@ -35,15 +36,7 @@ void assign_work(void) {
                 min_elements_per_process);
 
   for (i = 1; i < nprocesses; ++i) {
-    // Send array length
-    MPI_Send( &dim, 1,             MPI_INT,
-              i,    send_data_tag, MPI_COMM_WORLD );
-
-    printf("Sending array of length: %d and dim: %d to process %d...\n",
-          length, dim, i);
-
-    // Send matrix (array)
-    MPI_Send( arr, length, MPI_FLOAT, i, send_data_tag, MPI_COMM_WORLD );
+    send_matrix(dim, arr, i);
   }
 }
 
@@ -53,26 +46,12 @@ void assign_work(void) {
  * TODO Separate into slave_init and receive_work
  */
 void receive_work(void) {
-  MPI_Status status;
   printf("Slave process receiving work...\n");
 
-  // Receive array size
-  MPI_Recv( &dim,         1,              MPI_INT,
-            ROOT_PROCESS, send_data_tag,  MPI_COMM_WORLD,
-            &status );
-
-  length = dim * dim;
-  incoming_arr = malloc(length * sizeof(float));
-
-  MPI_Recv( incoming_arr, length, MPI_FLOAT,
-            ROOT_PROCESS, send_data_tag, MPI_COMM_WORLD,
-            &status );
-  printf("Matrix received too\n");
+  arr = receive_matrix(&length, &dim);
 
   /* Print some received data to check */
-  printf("This thread will have %d cells to receive! (Top left is %f)\n",
-         length,
-         incoming_arr[0]);
+  if (rank == 1) print_matrix(arr, length, dim);
 }
 
 void parse_args(int argc, char *argv[]) {

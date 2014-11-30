@@ -1,5 +1,5 @@
-OBJS = hellompi.o relaxation.o util.o
-SRCS = hellompi.c relaxation.c util.c
+OBJS = hellompi.o relaxation.o util.o messaging.o
+SRCS = hellompi.c relaxation.c util.c messaging.c
 CC = mpicc
 
 all: re

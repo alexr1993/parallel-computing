@@ -1,227 +1,28 @@
-
-STARTING PROGRAM
-================
-
-This is the master! (process 0 of 8)
-Generating matrix as no filename given.
-
-Initiated plain matrix:
-Matrix length: 100, dimension: 10
-
-
-1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-This is a slave! (process 5 of 8)
-Slave process receiving work...
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 
-
-
-Assigning Work and Starting Parallel Section
-============================================
-
-Min elements per process: 12
-
-Sending 10 to process 1
-Sending array of length: 100 and dim: 10...
-Sending 10 to process 2
-Sending array of length: 100 and dim: 10...
-Sending 10 to process 3
-Sending array of length: 100 and dim: 10...
-Sending 10 to process 4
-Sending array of length: 100 and dim: 10...
-Sending 10 to process 5
-Sending array of length: 100 and dim: 10...
-Sending 10 to process 6
-Sending array of length: 100 and dim: 10...
-Matrix received too
-Sending 10 to process 7
-Sending array of length: 100 and dim: 10...
-This is a slave! (process 1 of 8)
-This thread will have 10 cells to receive! (Top left is 0.696900)
-Slave process receiving work...
-Matrix received too
-This is a slave! (process 2 of 8)
-Slave process receiving work...
-This thread will have 10 cells to receive! (Top left is 0.696900)
-Matrix received too
-This thread will have 10 cells to receive! (Top left is 0.696900)
-This is a slave! (process 6 of 8)
-Slave process receiving work...
-Matrix received too
-This thread will have 10 cells to receive! (Top left is 0.696900)
 This is a slave! (process 4 of 8)
 Slave process receiving work...
-Matrix received too
-This thread will have 10 cells to receive! (Top left is 0.696900)
+
+STARTING PROGRAM
+================
+
+This is the master! (process 0 of 8)
 This is a slave! (process 3 of 8)
 Slave process receiving work...
-Matrix received too
-This thread will have 10 cells to receive! (Top left is 0.696900)
-This is a slave! (process 7 of 8)
-Slave process receiving work...
-Matrix received too
-This thread will have 10 cells to receive! (Top left is 0.696900)
-This is a slave! (process 2 of 8)
-Slave process receiving work...
-This is a slave! (process 5 of 8)
-Slave process receiving work...
-This is a slave! (process 6 of 8)
-Slave process receiving work...
+Generating matrix as no filename given.
+
+Initiated plain matrix:
+Matrix length: 100, dimension: 10
+
+
+1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
 This is a slave! (process 1 of 8)
-Slave process receiving work...
-This is a slave! (process 7 of 8)
-Slave process receiving work...
-This is a slave! (process 3 of 8)
-Slave process receiving work...
-
-STARTING PROGRAM
-================
-
-This is the master! (process 0 of 8)
-Generating matrix as no filename given.
-
-Initiated plain matrix:
-Matrix length: 100, dimension: 10
-
-
-1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 
-
-
-Assigning Work and Starting Parallel Section
-============================================
-
-Min elements per process: 12
-
-Sending 10 to process 1
-Sending array of length: 100 and dim: 10...
-Sending 10 to process 2
-Sending array of length: 100 and dim: 10...
-Sending 10 to process 3
-Matrix received too
-Sending array of length: 100 and dim: 10...
-Sending 10 to process 4
-Sending array of length: 100 and dim: 10...
-Sending 10 to process 5
-Matrix received too
-Sending array of length: 100 and dim: 10...
-Sending 10 to process 6
-Sending array of length: 100 and dim: 10...
-Sending 10 to process 7
-Sending array of length: 100 and dim: 10...
-Matrix received too
-Matrix received too
-Matrix received too
-Matrix received too
-This is a slave! (process 4 of 8)
-Slave process receiving work...
-Matrix received too
-This is a slave! (process 1 of 8)
-Slave process receiving work...
-This is a slave! (process 5 of 8)
-Slave process receiving work...
-This is a slave! (process 3 of 8)
-Slave process receiving work...
-
-STARTING PROGRAM
-================
-This is a slave! (process 7 of 8)
-Slave process receiving work...
-
-This is a slave! (process 2 of 8)
-Slave process receiving work...
-This is the master! (process 0 of 8)
-Generating matrix as no filename given.
-
-Initiated plain matrix:
-Matrix length: 100, dimension: 10
-
-
-1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 
-
-
-Assigning Work and Starting Parallel Section
-============================================
-
-Min elements per process: 12
-
-Sending 10 to process 1
-Sending array of length: 100 and dim: 10...
-Matrix received too
-Sending 10 to process 2
-This thread will have 100 cells to receive! (Top left is 0.696900)
-Sending array of length: 100 and dim: 10...
-Sending 10 to process 3
-Matrix received too
-This thread will have 100 cells to receive! (Top left is 0.696900)
-Sending array of length: 100 and dim: 10...
-Sending 10 to process 4
-Matrix received too
-This thread will have 100 cells to receive! (Top left is 0.696900)
-Sending array of length: 100 and dim: 10...
-Sending 10 to process 5
-Sending array of length: 100 and dim: 10...
-Matrix received too
-Sending 10 to process 6
-This thread will have 100 cells to receive! (Top left is 0.696900)
-Sending array of length: 100 and dim: 10...
-Sending 10 to process 7
-Sending array of length: 100 and dim: 10...
-Matrix received too
-This thread will have 100 cells to receive! (Top left is 0.696900)
-This is a slave! (process 4 of 8)
-Slave process receiving work...
-Matrix received too
-This thread will have 100 cells to receive! (Top left is 0.696900)
-This is a slave! (process 6 of 8)
-Slave process receiving work...
-Matrix received too
-This thread will have 100 cells to receive! (Top left is 0.696900)
-
-STARTING PROGRAM
-================
-
-This is the master! (process 0 of 8)
-Generating matrix as no filename given.
-
-Initiated plain matrix:
-Matrix length: 100, dimension: 10
-
-
-1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-This is a slave! (process 5 of 8)
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 
 
 
@@ -234,99 +35,31 @@ Slave process receiving work...
 Sending array of length: 100 and dim: 10 to process 1...
 Sending array of length: 100 and dim: 10 to process 2...
 Sending array of length: 100 and dim: 10 to process 3...
+Matrix received too
+
+Matrix received too
 Sending array of length: 100 and dim: 10 to process 4...
 Sending array of length: 100 and dim: 10 to process 5...
-Sending array of length: 100 and dim: 10 to process 6...
 Matrix received too
+Sending array of length: 100 and dim: 10 to process 6...
 Sending array of length: 100 and dim: 10 to process 7...
-This is a slave! (process 1 of 8)
+This is a slave! (process 5 of 8)
 Slave process receiving work...
 Matrix received too
 This is a slave! (process 6 of 8)
 Slave process receiving work...
 Matrix received too
-This is a slave! (process 7 of 8)
-Slave process receiving work...
-Matrix received too
-This is a slave! (process 3 of 8)
-Slave process receiving work...
-Matrix received too
-This is a slave! (process 4 of 8)
-Slave process receiving work...
-Matrix received too
 This is a slave! (process 2 of 8)
 Slave process receiving work...
 Matrix received too
-This is a slave! (process 5 of 8)
+This is a slave! (process 7 of 8)
+Slave process receiving work...
+Matrix received too
+This is a slave! (process 2 of 8)
 Slave process receiving work...
 This is a slave! (process 1 of 8)
 Slave process receiving work...
-
-STARTING PROGRAM
-================
-
-This is the master! (process 0 of 8)
-Generating matrix as no filename given.
-
-Initiated plain matrix:
-Matrix length: 100, dimension: 10
-
-
-1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
-1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 
-
-
-Assigning Work and Starting Parallel Section
-============================================
-
-Min elements per process: 12
-
 This is a slave! (process 4 of 8)
-Slave process receiving work...
-Sending array of length: 100 and dim: 10 to process 1...
-Sending array of length: 100 and dim: 10 to process 2...
-Sending array of length: 100 and dim: 10 to process 3...
-Matrix received too
-This thread will have 100 cells to receive! (Top left is 0.696900)
-Sending array of length: 100 and dim: 10 to process 4...
-Sending array of length: 100 and dim: 10 to process 5...
-Sending array of length: 100 and dim: 10 to process 6...
-Matrix received too
-This thread will have 100 cells to receive! (Top left is 0.696900)
-Sending array of length: 100 and dim: 10 to process 7...
-Matrix received too
-This thread will have 100 cells to receive! (Top left is 0.696900)
-This is a slave! (process 2 of 8)
-Slave process receiving work...
-Matrix received too
-This thread will have 100 cells to receive! (Top left is 0.696900)
-This is a slave! (process 6 of 8)
-Slave process receiving work...
-Matrix received too
-This thread will have 100 cells to receive! (Top left is 0.696900)
-This is a slave! (process 3 of 8)
-Slave process receiving work...
-Matrix received too
-This thread will have 100 cells to receive! (Top left is 0.696900)
-This is a slave! (process 7 of 8)
-Slave process receiving work...
-Matrix received too
-This thread will have 100 cells to receive! (Top left is 0.696900)
-This is a slave! (process 7 of 8)
-Slave process receiving work...
-This is a slave! (process 2 of 8)
-Slave process receiving work...
-This is a slave! (process 5 of 8)
-Slave process receiving work...
-This is a slave! (process 1 of 8)
 Slave process receiving work...
 
 STARTING PROGRAM
@@ -357,43 +90,38 @@ Assigning Work and Starting Parallel Section
 Min elements per process: 12
 
 Sending array of length: 100 and dim: 10 to process 1...
+Received int length: 100
+Matrix received too
+
 Sending array of length: 100 and dim: 10 to process 2...
 Sending array of length: 100 and dim: 10 to process 3...
-Matrix received too
 Sending array of length: 100 and dim: 10 to process 4...
-Sending array of length: 100 and dim: 10 to process 5...
+Received int length: 100
 Matrix received too
-This thread will have 100 cells to receive! (Top left is 0.696900)
+Sending array of length: 100 and dim: 10 to process 5...
 Sending array of length: 100 and dim: 10 to process 6...
 Sending array of length: 100 and dim: 10 to process 7...
+Received int length: 100
 Matrix received too
-This thread will have 100 cells to receive! (Top left is 0.696900)
-Matrix received too
-This thread will have 100 cells to receive! (Top left is 0.696900)
 This is a slave! (process 6 of 8)
 Slave process receiving work...
+Received int length: 100
 Matrix received too
-This thread will have 100 cells to receive! (Top left is 0.696900)
-This thread will have 100 cells to receive! (Top left is 0.696900)
-This is a slave! (process 3 of 8)
-Slave process receiving work...
-Matrix received too
-This thread will have 100 cells to receive! (Top left is 0.696900)
-This is a slave! (process 4 of 8)
-Slave process receiving work...
-Matrix received too
-This thread will have 100 cells to receive! (Top left is 0.696900)
-This is a slave! (process 3 of 8)
-Slave process receiving work...
 This is a slave! (process 5 of 8)
 Slave process receiving work...
-This is a slave! (process 2 of 8)
-This is a slave! (process 6 of 8)
-Slave process receiving work...
-This is a slave! (process 4 of 8)
-Slave process receiving work...
-Slave process receiving work...
+Received int length: 100
+Matrix received too
 This is a slave! (process 7 of 8)
+Slave process receiving work...
+Received int length: 100
+Matrix received too
+This is a slave! (process 3 of 8)
+Slave process receiving work...
+Received int length: 100
+Matrix received too
+This is a slave! (process 5 of 8)
+Slave process receiving work...
+This is a slave! (process 3 of 8)
 Slave process receiving work...
 
 STARTING PROGRAM
@@ -403,6 +131,77 @@ This is the master! (process 0 of 8)
 Generating matrix as no filename given.
 
 Initiated plain matrix:
+Matrix length: 100, dimension: 10
+
+
+1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+This is a slave! (process 2 of 8)
+Slave process receiving work...
+This is a slave! (process 4 of 8)
+Slave process receiving work...
+This is a slave! (process 7 of 8)
+Slave process receiving work...
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
+1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 
+
+
+Assigning Work and Starting Parallel Section
+============================================
+
+Min elements per process: 12
+
+Sending array of length: 100 and dim: 10 to process 1...
+Sending array of length: 100 and dim: 10 to process 2...
+Received int length: 100
+Matrix received too
+Received matrix of dim 10
+Received int length: 100
+Sending array of length: 100 and dim: 10 to process 3...
+Matrix received too
+Received matrix of dim 10
+Received int length: 100
+Matrix received too
+Received matrix of dim 10
+Received int length: 100
+Sending array of length: 100 and dim: 10 to process 4...
+Sending array of length: 100 and dim: 10 to process 5...
+Matrix received too
+Received matrix of dim 10
+Sending array of length: 100 and dim: 10 to process 6...
+Received int length: 100
+Sending array of length: 100 and dim: 10 to process 7...
+Matrix received too
+Received matrix of dim 10
+This is a slave! (process 1 of 8)
+Slave process receiving work...
+Received int length: 100
+Matrix received too
+Received matrix of dim 10
+
+This is a slave! (process 6 of 8)
+Slave process receiving work...
+Received int length: 100
+Matrix received too
+Received matrix of dim 10
+This is a slave! (process 1 of 8)
+Slave process receiving work...
+
+STARTING PROGRAM
+================
+
+This is the master! (process 0 of 8)
+Generating matrix as no filename given.
+
+Initiated plain matrix:
+This is a slave! (process 3 of 8)
+Slave process receiving work...
 Matrix length: 100, dimension: 10
 
 
@@ -428,34 +227,10 @@ Sending array of length: 100 and dim: 10 to process 2...
 Sending array of length: 100 and dim: 10 to process 3...
 Sending array of length: 100 and dim: 10 to process 4...
 Sending array of length: 100 and dim: 10 to process 5...
-Matrix received too
-This thread will have 100 cells to receive! (Top left is 0.696900)
-Matrix received too
-This thread will have 100 cells to receive! (Top left is 0.696900)
 Sending array of length: 100 and dim: 10 to process 6...
 Sending array of length: 100 and dim: 10 to process 7...
+Received int length: 100
 Matrix received too
-Matrix received too
-This thread will have 100 cells to receive! (Top left is 0.696900)
-Matrix received too
-This thread will have 100 cells to receive! (Top left is 0.696900)
-This thread will have 100 cells to receive! (Top left is 0.696900)
-Matrix received too
-This thread will have 100 cells to receive! (Top left is 0.696900)
-This is a slave! (process 1 of 8)
-Slave process receiving work...
-Matrix received too
-This thread will have 100 cells to receive! (Top left is 0.696900)
-
-STARTING PROGRAM
-================
-
-This is the master! (process 0 of 8)
-Generating matrix as no filename given.
-
-Initiated plain matrix:
-Matrix length: 100, dimension: 10
-
 
 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 
 1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
@@ -468,44 +243,25 @@ Matrix length: 100, dimension: 10
 1.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.000 1.000 
 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 1.000 
 
-
-Assigning Work and Starting Parallel Section
-============================================
-
-Min elements per process: 12
-
-Sending array of length: 100 and dim: 10 to process 1...
-Sending array of length: 100 and dim: 10 to process 2...
-Sending array of length: 100 and dim: 10 to process 3...
-Sending array of length: 100 and dim: 10 to process 4...
-Sending array of length: 100 and dim: 10 to process 5...
-Sending array of length: 100 and dim: 10 to process 6...
-Sending array of length: 100 and dim: 10 to process 7...
-This is a slave! (process 7 of 8)
-Slave process receiving work...
+Received int length: 100
 Matrix received too
-This thread will have 100 cells to receive! (Top left is 1.000000)
-This is a slave! (process 3 of 8)
-Slave process receiving work...
-Matrix received too
-This thread will have 100 cells to receive! (Top left is 1.000000)
-This is a slave! (process 6 of 8)
-Slave process receiving work...
-Matrix received too
-This thread will have 100 cells to receive! (Top left is 1.000000)
 This is a slave! (process 5 of 8)
 Slave process receiving work...
+Received int length: 100
+Matrix received too
+This is a slave! (process 2 of 8)
+Slave process receiving work...
+Received int length: 100
+Matrix received too
+This is a slave! (process 6 of 8)
+Slave process receiving work...
+Received int length: 100
+Matrix received too
+This is a slave! (process 7 of 8)
+Slave process receiving work...
+Received int length: 100
 Matrix received too
 This is a slave! (process 4 of 8)
 Slave process receiving work...
-This thread will have 100 cells to receive! (Top left is 1.000000)
+Received int length: 100
 Matrix received too
-This thread will have 100 cells to receive! (Top left is 1.000000)
-This is a slave! (process 2 of 8)
-Slave process receiving work...
-Matrix received too
-This thread will have 100 cells to receive! (Top left is 1.000000)
-This is a slave! (process 1 of 8)
-Slave process receiving work...
-Matrix received too
-This thread will have 100 cells to receive! (Top left is 1.000000)
