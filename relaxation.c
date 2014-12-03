@@ -9,9 +9,10 @@
 
 #include "mpi.h"
 #include "util.h"
+#include "messaging.h"
 
 extern bool v, V; //verbose
-extern int dim, length, nprocesses, min_elements_per_process, iter_counter;
+extern int dim, length, iter_counter, rank;
 extern float precision;
 extern float *arr, *new_values_arr, *precision_arr;
 
@@ -170,7 +171,7 @@ void solve (void *arg)
                          new_values_arr,
                          precision_arr    );
 
-        if (is_main_process)
+        if (rank == ROOT_PROCESS)
         {
             ++iter_counter;
 

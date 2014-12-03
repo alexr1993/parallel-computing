@@ -11,10 +11,6 @@
 #include "relaxation.h"
 #include "messaging.h"
 
-#define send_data_tag 2001
-#define return_data_tag 2002
-#define ROOT_PROCESS 0
-
 bool v, V; //verbose
 int dim = 0,
     length = 0,
@@ -49,7 +45,7 @@ void assign_work(void) {
 
   /* Send matrix to processes */
   for (i = 1; i < nprocesses; ++i) {
-    send_matrix(dim, arr, i);
+    send_matrix(arr, i);
 
   }
 }
@@ -62,7 +58,7 @@ void assign_work(void) {
 void receive_work(void) {
   printf("Slave process receiving work...\n");
 
-  arr = receive_matrix(&length, &dim);
+  receive_matrix(arr);
 
   /* Print some received data to check */
   if (rank == 1) print_matrix(arr, length, dim);
@@ -187,7 +183,9 @@ void run_master(void) {
 
   /* Branch for master and slave execution */
   printf("This is the master! (process %d of %d)\n", rank, nprocesses);
-  assign_work();
+
+  //do {
+    assign_work();
 }
 
 void run_slave(void) {
@@ -205,6 +203,8 @@ void establish_gbls(void) {
   min_rows_per_process = dim / nprocesses;
 
   calculate_work_area(rank);
+
+  new_values_arr = malloc(length * sizeof(float)); // Unnecessarily large
 
   if (v) printf("Min elements per process: %d\n\n", min_elements_per_process);
   if (v) printf("Min rows per process: %d\n\n", min_rows_per_process);
