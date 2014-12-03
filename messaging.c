@@ -1,11 +1,14 @@
 #include "messaging.h"
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "mpi.h"
 
 #define send_data_tag 42
+
+extern bool v, V;
 
 void send_matrix(int dim, float *data, int rank) {
     // Send array length
@@ -48,7 +51,7 @@ void send_process_data(int start_ix, int end_ix, int rank) {
 void receive_process_data(int *start_ix_ptr, int *end_ix_ptr) {
   int indexes[2] = { 0, 0 };
   MPI_Status status;
-  MPI_Recv(indexes, 2, MPI_INT, ROOT_PROCESS, send_data_tag, MNPI_COMM_WORLD,
+  MPI_Recv(indexes, 2, MPI_INT, ROOT_PROCESS, send_data_tag, MPI_COMM_WORLD,
            &status);
 
   *start_ix_ptr = indexes[0];

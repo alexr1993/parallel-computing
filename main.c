@@ -16,7 +16,19 @@
 #define ROOT_PROCESS 0
 
 bool v, V; //verbose
-int dim = 0, length = 0, nprocesses, min_elements_per_process, iter_counter, rank, rc;
+int dim = 0,
+    length = 0,
+    nprocesses,
+    min_elements_per_process,
+    min_rows_per_process,
+    iter_counter,
+    rank,
+    start_ix,
+    end_ix,
+    start_row,
+    end_row,
+    rc; // MPI response code
+
 float precision;
 float *arr, *new_values_arr, *precision_arr, *incoming_arr;
 
@@ -30,28 +42,15 @@ struct process_data *process_data_arr;
 void assign_work(void) {
   /* (For now) send the whole array to each processes */
   int i;
-  min_elements_per_process = length / nprocesses;
 
   if (V) printf("\nAssigning Work and Starting Parallel Section\n");
   if (V) printf("============================================\n\n");
-  if (v) printf("Min elements per process: %d\n\n",
-                min_elements_per_process);
+
 
   /* Send matrix to processes */
-  /* Send processes their work spec (start and end indexes) */
-  int start_ix, end_ix;
-
   for (i = 1; i < nprocesses; ++i) {
     send_matrix(dim, arr, i);
 
-    start_ix = i * nprocesses;
-    end_ix = start_ix + min_elements_per_process;
-
-    // Give leftovers to last process
-    if (i == nprocesses - 1) {
-      end_ix += length % nprocesses;
-    }
-    send_process_data(start_ix, end_ix, i);
   }
 }
 
@@ -67,9 +66,29 @@ void receive_work(void) {
 
   /* Print some received data to check */
   if (rank == 1) print_matrix(arr, length, dim);
+}
 
-  int start_ix, end_ix;
-  receive_process_data(&start_ix, &end_ix);
+/*
+ * Sets the variables which tell the processes which part of the array to work
+ * on
+ */
+void calculate_work_area(int rank) {
+  start_ix = rank * min_elements_per_process;
+  end_ix = start_ix + min_elements_per_process;
+
+  start_row = rank * min_rows_per_process;
+  end_row = start_row + min_rows_per_process;
+
+  // Give leftovers to last process
+  if (rank == nprocesses - 1) {
+    end_ix += length % nprocesses;
+    end_row += dim % nprocesses;
+  }
+
+  if (v)
+    printf(
+      "This processor (%d) will work on elems [%d, %d] or rows [%d, %d]\n",
+      rank, start_ix, end_ix, start_row, end_row );
 }
 
 void parse_args(int argc, char *argv[]) {
@@ -122,15 +141,18 @@ void parse_args(int argc, char *argv[]) {
   }
   free(filename);
 }
+
 void init(int argc, char *argv[]);
-void run_master(int argc, char *argv[]);
+void run_master(void);
 void run_slave(void);
+void establish_gbls(void);
 
 int main (int argc, char *argv[]) {
 
+
   init(argc, argv);
   if (rank == ROOT_PROCESS) {
-    run_master(argc, argv);
+    run_master();
   } else {
     run_slave();
   }
@@ -139,6 +161,9 @@ int main (int argc, char *argv[]) {
   return 0;
 }
 
+/*
+ * Initialisation relevant to both master and slaves
+ */
 void init(int argc, char *argv[]) {
   rc = MPI_Init(&argc, &argv); // Starts MPI
 
@@ -148,17 +173,20 @@ void init(int argc, char *argv[]) {
     MPI_Abort(MPI_COMM_WORLD, rc);
   }
 
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank); // Get current process id
-  MPI_Comm_size(MPI_COMM_WORLD, &nprocesses); // Get number of processes
+  parse_args(argc, argv);
+  establish_gbls();
 }
 
-void run_master(int argc, char *argv[]) {
+/*
+ * Handles the delegation of work and then the subsequent reduction of both
+ * the return array rows, as well as precision value to check for completion
+ */
+void run_master(void) {
   printf("\nSTARTING MASTER EXECUTION\n");
   printf("================\n\n");
 
   /* Branch for master and slave execution */
   printf("This is the master! (process %d of %d)\n", rank, nprocesses);
-  parse_args(argc, argv);
   assign_work();
 }
 
@@ -167,3 +195,18 @@ void run_slave(void) {
   printf("This is a slave! (process %d of %d)\n", rank, nprocesses);
   receive_work();
 }
+
+/* Calculate useful values at startup */
+void establish_gbls(void) {
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank); // Get current process id
+  MPI_Comm_size(MPI_COMM_WORLD, &nprocesses); // Get number of processes
+
+  min_elements_per_process = length / nprocesses;
+  min_rows_per_process = dim / nprocesses;
+
+  calculate_work_area(rank);
+
+  if (v) printf("Min elements per process: %d\n\n", min_elements_per_process);
+  if (v) printf("Min rows per process: %d\n\n", min_rows_per_process);
+}
+
