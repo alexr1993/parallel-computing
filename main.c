@@ -1,3 +1,5 @@
+#include "main.h"
+
 #include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -17,7 +19,7 @@ int dim = 0,
     nprocesses,
     min_elements_per_process,
     min_rows_per_process,
-    iter_counter,
+    iter_counter = 1,
     rank,
     start_ix,
     end_ix,
@@ -25,28 +27,24 @@ int dim = 0,
     end_row,
     rc; // MPI response code
 
-float precision;
-float *arr, *new_values_arr, *precision_arr, *incoming_arr;
+float precision, current_precision;
+float *arr, *new_values_arr, *precision_arr, *working_arr, *new_working_arr;
 
-struct process_data;
-struct process_data p_data;
-struct process_data *process_data_arr;
+struct process_data *p_data;
 
 /*
  * Sends processes their array indices
  */
-void assign_work(void) {
+void dispatch_work(void) {
   /* (For now) send the whole array to each processes */
   int i;
 
   if (V) printf("\nAssigning Work and Starting Parallel Section\n");
   if (V) printf("============================================\n\n");
 
-
   /* Send matrix to processes */
   for (i = 1; i < nprocesses; ++i) {
     send_matrix(arr, i);
-
   }
 }
 
@@ -58,7 +56,7 @@ void assign_work(void) {
 void receive_work(void) {
   printf("Slave process receiving work...\n");
 
-  receive_matrix(arr);
+  receive_matrix(arr, rank);
 
   /* Print some received data to check */
   if (rank == 1) print_matrix(arr, length, dim);
@@ -69,22 +67,19 @@ void receive_work(void) {
  * on
  */
 void calculate_work_area(int rank) {
-  start_ix = rank * min_elements_per_process;
-  end_ix = start_ix + min_elements_per_process;
+  int i;
+  for (i = 0; i < nprocesses; ++i) {
+    p_data[i].start_row = rank * min_rows_per_process;
+    p_data[i].end_row = p_data[i].start_row + min_rows_per_process;
 
-  start_row = rank * min_rows_per_process;
-  end_row = start_row + min_rows_per_process;
+    // Give leftovers to last process
+    if (rank == nprocesses - 1) {
+      p_data[i].end_row += dim % nprocesses;
+    }
 
-  // Give leftovers to last process
-  if (rank == nprocesses - 1) {
-    end_ix += length % nprocesses;
-    end_row += dim % nprocesses;
+    p_data[i].nrows = p_data[i].end_row - p_data[i].start_row;
+    p_data[i].nelements = p_data[i].nrows * dim;
   }
-
-  if (v)
-    printf(
-      "This processor (%d) will work on elems [%d, %d] or rows [%d, %d]\n",
-      rank, start_ix, end_ix, start_row, end_row );
 }
 
 void parse_args(int argc, char *argv[]) {
@@ -142,6 +137,7 @@ void init(int argc, char *argv[]);
 void run_master(void);
 void run_slave(void);
 void establish_gbls(void);
+void recover_matrix(void);
 
 int main (int argc, char *argv[]) {
 
@@ -184,14 +180,26 @@ void run_master(void) {
   /* Branch for master and slave execution */
   printf("This is the master! (process %d of %d)\n", rank, nprocesses);
 
-  //do {
-    assign_work();
+  while (true) {
+    dispatch_work(); // Dispatch work to other processes
+    //relax();
+    //recover_matrix();
+    //current_precision = calculate_precision();
+
+    if ( is_finished(current_precision) ) {
+      return;
+    }
+  }
 }
 
 void run_slave(void) {
-  /* Slave process execution */
-  printf("This is a slave! (process %d of %d)\n", rank, nprocesses);
-  receive_work();
+  while (true) {
+    /* Slave process execution */
+    printf("This is a slave! (process %d of %d)\n", rank, nprocesses);
+    receive_work();
+    //relax();
+    //return_work();
+  }
 }
 
 /* Calculate useful values at startup */
@@ -202,11 +210,30 @@ void establish_gbls(void) {
   min_elements_per_process = length / nprocesses;
   min_rows_per_process = dim / nprocesses;
 
-  calculate_work_area(rank);
+  p_data = malloc(nprocesses * sizeof(struct process_data));
 
-  new_values_arr = malloc(length * sizeof(float)); // Unnecessarily large
+  /* Populate process_data structs */
+  int i;
+  for (i = 0; i < nprocesses; ++i) {
+    calculate_work_area(i);
+  }
+
+  if (v) {
+    printf(
+      "This processor (%d) will work on or rows [%d, %d]\n",
+      rank,
+      p_data[rank].start_row,
+      p_data[rank].end_row    );
+  }
+
+  /* Each process needs space for its designated rows + the one above and the
+     one below (These will not always be full, e.g. when sending the top and
+     bottom rows.
+     An additional array is needed to store the relaxed values
+   */
+  working_arr = malloc(dim * (p_data[rank].nrows + 2) * sizeof(float));
+  new_working_arr = malloc(dim * (p_data[rank].nrows + 2) * sizeof(float));
 
   if (v) printf("Min elements per process: %d\n\n", min_elements_per_process);
   if (v) printf("Min rows per process: %d\n\n", min_rows_per_process);
 }
-

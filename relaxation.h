@@ -1,6 +1,6 @@
-typedef struct process_data {
-  int rank;
-  int start_ix;
-  int end_ix;
-  int process_num;
-} process_data;
+#ifndef RELAXATION_H_
+#define RELAXATION_H_
+
+#include <stdbool.h>
+bool is_finished(float max_change);
+#endif

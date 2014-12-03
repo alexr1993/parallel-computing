@@ -3,7 +3,7 @@
 
 #define ROOT_PROCESS 0
 void send_matrix(float *data, int rank);
-float *receive_matrix(float *data);
+void receive_matrix(float *data, int rank);
 
 #define send_data_tag 2001
 #define return_data_tag 2002

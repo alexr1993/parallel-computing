@@ -141,32 +141,26 @@ bool is_finished(float max_change)
  *
  * Accepts process_data as an arg, or NULL if it's the main process
  */
-void solve (void *arg)
+void solve (int start_ix, int end_ix, int num)
 {
 
     bool is_main_process = false;
 
-    process_data process = *(process_data *)arg;
-
-    int process_num = process.process_num;
-    if (process_num == 0) is_main_process = true;
-
-
     // Iterate until relaxed to given precision
     while (true)
     {
-        relax(process.start_ix, process.end_ix, arr, new_values_arr);
+        relax(start_ix, end_ix, arr, new_values_arr);
 
         if (v) printf(
             "Finished averaging elements %d to %d (process %d)\n",
-            process.start_ix,
-            process.end_ix,
-            process_num
+            start_ix,
+            end_ix,
+            num
         );
 
         // Update contents of precision array
-        recalc_prec_arr( process.start_ix,
-                         process.end_ix,
+        recalc_prec_arr( start_ix,
+                         end_ix,
                          arr,
                          new_values_arr,
                          precision_arr    );
