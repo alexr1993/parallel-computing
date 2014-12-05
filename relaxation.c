@@ -14,7 +14,7 @@
 extern bool v, V; //verbose
 extern int dim, length, iter_counter, rank;
 extern float precision;
-extern float *working_arr, *new_working_arr, *precision_arr;
+extern float *arr, *working_arr, *new_working_arr, *precision_arr;
 
 struct process_data;
 
@@ -33,27 +33,6 @@ void recalc_prec_arr( int start_ix,    int end_ix, float *old_vals,
     {
         prec_arr[i] = fabs(old_vals[i] - new_vals[i]);
     }
-}
-
-/* Checks for the highest value in the array and returns it, the highest value
- * is the lowest precision which is how precision is measured
- */
-float get_max(float *precision_arr)
-{
-    int i;
-    float max = 0;
-    float cell_prec;
-
-    for (i = 0; i < length; ++i)
-    {
-        cell_prec = precision_arr[i];
-        // Return false if cell is not precise enough
-        if (cell_prec > max)
-        {
-            max = cell_prec;
-        }
-    }
-    return max;
 }
 
 /*
@@ -117,7 +96,7 @@ bool is_finished(float max_change)
         printf("\nRelaxation Complete (%d Iterations)!\n",
                iter_counter);
 
-        if (v) print_matrix(working_arr, length, dim);
+        if (v) print_matrix(arr, length, dim);
         return true;
     }
     else
@@ -128,7 +107,7 @@ bool is_finished(float max_change)
             if (V)
             {
                 printf("\nState of matrix:\n");
-                print_matrix(working_arr, length, dim);
+                print_matrix(arr, length, dim);
             }
             printf("\nPrecision Not Reached - Iterating\n");
             if (V) printf("=================================\n");

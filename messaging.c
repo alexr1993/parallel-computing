@@ -121,8 +121,9 @@ void receive_matrix(float *data, int rank) {
     MPI_Recv( data,         recv_length,       MPI_FLOAT,
               ROOT_PROCESS, send_data_tag, MPI_COMM_WORLD,
               &status );
-    if (v) printf("SLAVE %d: Received matrix successfully!\n", rank);
-    if (v) print_matrix(data, recv_length, dim);
+    if (v) {
+      printf("SLAVE %d: Received matrix successfully!\n", rank);
+      print_matrix(data, recv_length, dim);
+    }
   }
-  printf("Matrix received.\n");
 }

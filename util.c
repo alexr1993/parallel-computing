@@ -131,4 +131,13 @@ float *create_plain_matrix(int length, int dim) {
   return arr;
 }
 
+/* Returns largest value in array - for precision check */
+float get_max(float *arr, int len) {
+  int i;
+  float max = -1;
 
+  for (i = 0; i < len; ++i) {
+    if (arr[i] > max) max = arr[i];
+  }
+  return max;
+}

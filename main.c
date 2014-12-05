@@ -62,7 +62,6 @@ void calculate_work_area(void) {
       --leftovers;
       ++bump;
     }
-
     p_data[i].start_ix = p_data[i].start_row * dim;
     p_data[i].end_ix   = p_data[i].end_row   * dim;
     p_data[i].nrows = p_data[i].end_row - p_data[i].start_row;
@@ -199,8 +198,18 @@ void run_master(void) {
     int nrelaxed = process_relax(arr, new_working_arr);
     if (v) printf("MASTER: Ready to merge relaxed fragments\n");
     if (V) print_matrix(new_working_arr, nrelaxed, dim);
+
+    // Calculate precision
+    printf("MASTER: calculating precision\n");
+    recalc_prec_arr( 0, nrelaxed, arr, new_working_arr, precision_arr );
+
+    // Copy back relaxed values
+    memcpy(arr, new_working_arr, nrelaxed * sizeof(float));
+
+    current_precision = get_max(precision_arr, nrelaxed);
+    printf("MASTER: local precision is %f.\n", current_precision);
+
     receive_matrix(arr, rank);
-    //current_precision = calculate_precision();
 
     if ( is_finished(current_precision) ) {
       return;
@@ -214,9 +223,15 @@ void run_slave(void) {
     receive_matrix(working_arr, rank);
 
     int nrelaxed = process_relax(working_arr, new_working_arr);
-    if (v) printf("SLAVE %d: Ready to return fragment", rank);
+    if (v) printf("SLAVE %d: Ready to return fragment\n", rank);
     if (V) print_matrix(new_working_arr, nrelaxed, dim);
-    //send_matrix(new_working_arr, rank);
+    send_matrix(new_working_arr, rank);
+
+    if (v) printf("SLAVE %d: calculating precision\n", rank);
+    recalc_prec_arr(0, nrelaxed, working_arr, new_working_arr, precision_arr);
+    current_precision = get_max(precision_arr, nrelaxed);
+
+    printf("SLAVE %d: local precision is %f.\n", rank, current_precision);
   //}
 }
 
@@ -251,6 +266,7 @@ void establish_gbls(void) {
    */
   working_arr = malloc(dim * (p_data[rank].nrows + 2) * sizeof(float));
   new_working_arr = malloc(dim * (p_data[rank].nrows + 2) * sizeof(float));
+  precision_arr = malloc(dim * (p_data[rank].nrows + 2) * sizeof(float));
 
   if (v) printf("Min elements per process: %d\n\n", min_elements_per_process);
   if (v) printf("Min rows per process: %d\n\n", min_rows_per_process);
