@@ -71,9 +71,11 @@ void relax (int start_ix, int end_ix, float *arr, float *new_values)
     for (i = start_ix; i < end_ix; ++i)
     {
         // Copy over edge cells (no computation needed)
-        if (is_edge_index(i, dim))
+        // Second cond needed to catch the last line of matrix fragments
+        if (is_edge_index(i, dim) || i >= end_ix - dim)
         {
             new_values[i] = arr[i];
+            printf("Skip edge");
         }
         // Set cell to the average of it's neighbours
         else
@@ -85,7 +87,9 @@ void relax (int start_ix, int end_ix, float *arr, float *new_values)
 
             new_values[i] = (right + left + above + below) / 4;
         }
+        printf("(%f => %f) ", arr[i], new_values[i]);
     }
+    printf("\n");
 }
 
 /*
@@ -143,8 +147,6 @@ bool is_finished(float max_change)
  */
 void solve (int start_ix, int end_ix, int num)
 {
-
-    bool is_main_process = false;
 
     // Iterate until relaxed to given precision
     while (true)

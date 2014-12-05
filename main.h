@@ -6,6 +6,8 @@ typedef struct process_data {
   int start_row;
   int end_row;
   int nrows;
+  int start_ix;
+  int end_ix;
   int nelements;
 } process_data;
 

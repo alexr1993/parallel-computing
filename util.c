@@ -7,7 +7,7 @@
 extern bool v, V;
 
 /*
- * Sequentially prints matrix
+ * Sequentially prints matrix (may be a fragment, determined by length)
  */
 void print_matrix(float *arr, int length, int dim) {
   printf("\n");

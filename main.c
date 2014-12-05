@@ -46,34 +46,25 @@ void dispatch_work(void) {
 }
 
 /*
- * (Slave)
- * MPI_Recv's an array length and an array
- * TODO Separate into slave_init and receive_work
- */
-void receive_work(void) {
-  receive_matrix(arr, rank);
-
-  /* Print some received data to check */
-  if (rank == 1) print_matrix(arr, length, dim);
-}
-
-/*
  * Sets the variables which tell the processes which part of the array to work
  * on
  */
 void calculate_work_area(void) {
   int leftovers = dim % nprocesses;
-  int i;
+  int i, bump = 0;
   for (i = 0; i < nprocesses; ++i) {
-    p_data[i].start_row = i * min_rows_per_process;
+    p_data[i].start_row = i * min_rows_per_process + bump;
     p_data[i].end_row = p_data[i].start_row + min_rows_per_process;
 
     // Distribute leftovers
     if (leftovers != 0) {
       ++p_data[i].end_row;
       --leftovers;
+      ++bump;
     }
 
+    p_data[i].start_ix = p_data[i].start_row * dim;
+    p_data[i].end_ix   = p_data[i].end_row   * dim;
     p_data[i].nrows = p_data[i].end_row - p_data[i].start_row;
     p_data[i].nelements = p_data[i].nrows * dim;
   }
@@ -161,7 +152,6 @@ void init(int argc, char *argv[]) {
     printf("Error starting MPI program. Terminating.\n");
     MPI_Abort(MPI_COMM_WORLD, rc);
   }
-
   parse_args(argc, argv);
   establish_gbls();
 }
@@ -179,12 +169,12 @@ void run_master(void) {
 
   //while (true) {
     if (v) printf("MASTER: About to start working on [%d-%d)...\n",
-                  p_data[ROOT_PROCESS].start_row * dim,
-                  p_data[ROOT_PROCESS].end_row * dim    );
+                  p_data[ROOT_PROCESS].start_ix,
+                  p_data[ROOT_PROCESS].end_ix    );
     if (v) printf("MASTER: Dispatching work!\n");
     dispatch_work(); // Dispatch work to other processes
     //relax();
-    //recover_matrix();
+    receive_matrix(arr, rank);
     //current_precision = calculate_precision();
 
     if ( is_finished(current_precision) ) {
@@ -197,9 +187,16 @@ void run_slave(void) {
   //while (true) {
     /* Slave process execution */
     printf("This is a slave! (process %d of %d)\n", rank, nprocesses);
-    receive_work();
-    //relax();
-    //return_work();
+    receive_matrix(working_arr, rank);
+
+    int rel_start_ix = 0, rel_end_ix = dim + p_data[rank].nelements;
+
+    printf("SLAVE %d: Relaxing elements [%d-%d)\n", rank,
+           rel_start_ix, rel_end_ix);
+    relax(rel_start_ix, rel_end_ix, working_arr, new_working_arr);
+
+    print_matrix(new_working_arr, p_data[rank].nelements + 2 * dim, dim);
+    //send_matrix(new_working_arr, rank);
   //}
 }
 
