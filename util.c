@@ -22,18 +22,25 @@ void print_matrix(float *arr, int length, int dim) {
   printf("\n");
 }
 
-// Uses 1D array index to check if the cell would lie on the edge of the
-// square array
-bool is_edge_index (int index, int dim)
-{
+bool is_on_edge_row(int index, int length, int dim) {
   // Check if index is on first or last row
-  if (index < dim || index >= dim * dim - dim) {
+  if (index < dim || index >= length - dim) {
       return true;
   }
+  return false;
+}
 
+bool is_on_edge_column(int index, int dim) {
   // Check if index is on left or right
   int mod = (index % dim);
   return mod == 0 || mod == dim - 1;
+}
+
+// Uses 1D array index to check if the cell would lie on the edge of the
+// square array
+bool is_edge_index (int index, int length, int dim)
+{
+  return is_on_edge_row(index, length, dim) || is_on_edge_column(index, dim);
 }
 
 /*
@@ -111,7 +118,7 @@ float *create_plain_matrix(int length, int dim) {
   int i;
   for (i = 0; i < length; ++i) {
     // Set the edges to 1 and everything else to 0
-    if (is_edge_index(i, dim)) {
+    if (is_edge_index(i, length, dim)) {
       arr[i] = 1;
     } else {
       arr[i] = 0;

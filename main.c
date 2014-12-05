@@ -28,7 +28,7 @@ int dim = 0,
     rc; // MPI response code
 
 float precision, current_precision;
-float *arr, *new_values_arr, *precision_arr, *working_arr, *new_working_arr;
+float *arr, *precision_arr, *working_arr, *new_working_arr;
 
 struct process_data *p_data;
 
@@ -134,6 +134,7 @@ int main (int argc, char *argv[]) {
   if (rank == ROOT_PROCESS) {
     run_master();
   } else {
+    printf("SLAVE %d: Entering main loop.\n", rank);
     run_slave();
   }
 
@@ -156,6 +157,27 @@ void init(int argc, char *argv[]) {
   establish_gbls();
 }
 
+int get_rel_end_ix(void) {
+  int rel_end_ix = p_data[rank].nelements;
+  if (rank == ROOT_PROCESS || rank == nprocesses - 1) {
+    rel_end_ix += dim;
+  }
+  else {
+    rel_end_ix += 2 * dim;
+  }
+  return rel_end_ix;
+}
+
+/* Handles the indexing and relaxing of elements for a process */
+int process_relax(float *input_arr, float *output_arr) {
+  int rel_start_ix = 0, rel_end_ix = get_rel_end_ix();
+
+  if (v) printf("SLAVE %d: Relaxing elements [%d-%d)\n", rank,
+                rel_start_ix, rel_end_ix);
+  relax(rel_start_ix, rel_end_ix, input_arr, output_arr);
+  return rel_end_ix;
+}
+
 /*
  * Handles the delegation of work and then the subsequent reduction of both
  * the return array rows, as well as precision value to check for completion
@@ -173,7 +195,10 @@ void run_master(void) {
                   p_data[ROOT_PROCESS].end_ix    );
     if (v) printf("MASTER: Dispatching work!\n");
     dispatch_work(); // Dispatch work to other processes
-    //relax();
+
+    int nrelaxed = process_relax(arr, new_working_arr);
+    if (v) printf("MASTER: Ready to merge relaxed fragments\n");
+    if (V) print_matrix(new_working_arr, nrelaxed, dim);
     receive_matrix(arr, rank);
     //current_precision = calculate_precision();
 
@@ -186,16 +211,11 @@ void run_master(void) {
 void run_slave(void) {
   //while (true) {
     /* Slave process execution */
-    printf("This is a slave! (process %d of %d)\n", rank, nprocesses);
     receive_matrix(working_arr, rank);
 
-    int rel_start_ix = 0, rel_end_ix = dim + p_data[rank].nelements;
-
-    printf("SLAVE %d: Relaxing elements [%d-%d)\n", rank,
-           rel_start_ix, rel_end_ix);
-    relax(rel_start_ix, rel_end_ix, working_arr, new_working_arr);
-
-    print_matrix(new_working_arr, p_data[rank].nelements + 2 * dim, dim);
+    int nrelaxed = process_relax(working_arr, new_working_arr);
+    if (v) printf("SLAVE %d: Ready to return fragment", rank);
+    if (V) print_matrix(new_working_arr, nrelaxed, dim);
     //send_matrix(new_working_arr, rank);
   //}
 }
@@ -218,7 +238,7 @@ void establish_gbls(void) {
 
   if (v) {
     printf(
-      "This processor (%d) will work on rows [%d, %d]\n",
+      "SLAVE %d: Will work on rows [%d, %d)\n",
       rank,
       p_data[rank].start_row,
       p_data[rank].end_row    );

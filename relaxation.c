@@ -14,7 +14,7 @@
 extern bool v, V; //verbose
 extern int dim, length, iter_counter, rank;
 extern float precision;
-extern float *arr, *new_values_arr, *precision_arr;
+extern float *working_arr, *new_working_arr, *precision_arr;
 
 struct process_data;
 
@@ -72,10 +72,9 @@ void relax (int start_ix, int end_ix, float *arr, float *new_values)
     {
         // Copy over edge cells (no computation needed)
         // Second cond needed to catch the last line of matrix fragments
-        if (is_edge_index(i, dim) || i >= end_ix - dim)
+        if (is_edge_index(i, end_ix, dim))
         {
             new_values[i] = arr[i];
-            printf("Skip edge");
         }
         // Set cell to the average of it's neighbours
         else
@@ -87,7 +86,6 @@ void relax (int start_ix, int end_ix, float *arr, float *new_values)
 
             new_values[i] = (right + left + above + below) / 4;
         }
-        printf("(%f => %f) ", arr[i], new_values[i]);
     }
     printf("\n");
 }
@@ -119,7 +117,7 @@ bool is_finished(float max_change)
         printf("\nRelaxation Complete (%d Iterations)!\n",
                iter_counter);
 
-        if (v) print_matrix(arr, length, dim);
+        if (v) print_matrix(working_arr, length, dim);
         return true;
     }
     else
@@ -130,7 +128,7 @@ bool is_finished(float max_change)
             if (V)
             {
                 printf("\nState of matrix:\n");
-                print_matrix(arr, length, dim);
+                print_matrix(working_arr, length, dim);
             }
             printf("\nPrecision Not Reached - Iterating\n");
             if (V) printf("=================================\n");
@@ -140,45 +138,3 @@ bool is_finished(float max_change)
     }
 }
 
-/*
- * Iteratively relaxes the array until precision is met
- *
- * Accepts process_data as an arg, or NULL if it's the main process
- */
-void solve (int start_ix, int end_ix, int num)
-{
-
-    // Iterate until relaxed to given precision
-    while (true)
-    {
-        relax(start_ix, end_ix, arr, new_values_arr);
-
-        if (v) printf(
-            "Finished averaging elements %d to %d (process %d)\n",
-            start_ix,
-            end_ix,
-            num
-        );
-
-        // Update contents of precision array
-        recalc_prec_arr( start_ix,
-                         end_ix,
-                         arr,
-                         new_values_arr,
-                         precision_arr    );
-
-        if (rank == ROOT_PROCESS)
-        {
-            ++iter_counter;
-
-            // Put the new values into the main array
-            // This could be parallelised
-            memcpy(arr, new_values_arr, length * sizeof(float));
-
-            if ( is_finished(get_max(precision_arr)) )
-            {
-                return;
-            }
-        }
-    }
-}

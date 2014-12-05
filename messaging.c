@@ -50,7 +50,7 @@ void send_matrix(float *data, int rank) {
         send_length += dim;
       }
       if (v)
-        printf("Sending elems [%d-%d) to process %d to work on [%d-%d)...\n",
+        printf("MASTER: Sending elems [%d-%d) to SLAVE %d to work on [%d-%d)...\n",
                start_ix,
                start_ix + send_length,
                i,
@@ -62,7 +62,7 @@ void send_matrix(float *data, int rank) {
                 send_data_tag,
                 MPI_COMM_WORLD                  );
 
-      if (v) printf("Successfuly sent work to process %d!\n", i);
+      if (v) printf("MASTER: Successfuly sent work to process %d!\n", i);
     }
   } else {
     // dim is the index of the first relevant element
@@ -108,18 +108,20 @@ void receive_matrix(float *data, int rank) {
     }
   } else {
     int recv_length = p_data[rank].nelements;
-    if (rank == 0) {
+
+    /* Add length for padding rows */
+    if (rank == 0 || rank == nprocesses - 1) {
       recv_length += dim;
-    }
-    if (rank == nprocesses - 1) {
-      recv_length += dim;
+    } else {
+      recv_length += 2 * dim;
     }
 
-    if (v) printf("Slave (%d) waiting for matrix\n...", rank);
+    if (v) printf("SLAVE %d: Waiting for matrix (%d elems)\n",
+                  rank, recv_length);
     MPI_Recv( data,         recv_length,       MPI_FLOAT,
               ROOT_PROCESS, send_data_tag, MPI_COMM_WORLD,
               &status );
-    if (v) printf("Slave (%d) received matrix successfully!\n", rank);
+    if (v) printf("SLAVE %d: Received matrix successfully!\n", rank);
     if (v) print_matrix(data, recv_length, dim);
   }
   printf("Matrix received.\n");
