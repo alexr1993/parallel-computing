@@ -101,6 +101,7 @@ bool is_finished(float max_change)
     }
     else
     {
+        ++iter_counter;
         /* Verboseness */
         if (v)
         {

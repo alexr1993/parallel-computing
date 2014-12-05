@@ -188,7 +188,7 @@ void run_master(void) {
   /* Branch for master and slave execution */
   printf("This is the master! (process %d of %d)\n", rank, nprocesses);
 
-  //while (true) {
+  while (true) {
     if (v) printf("MASTER: About to start working on [%d-%d)...\n",
                   p_data[ROOT_PROCESS].start_ix,
                   p_data[ROOT_PROCESS].end_ix    );
@@ -211,14 +211,19 @@ void run_master(void) {
 
     receive_matrix(arr, rank);
 
+    float precs[nprocesses];
+    collect_precision(precs);
+
+    current_precision = get_max(precs, nprocesses);
+    printf("MASTER: Global precision is %f.\n", current_precision);
     if ( is_finished(current_precision) ) {
       return;
     }
-  //}
+  }
 }
 
 void run_slave(void) {
-  //while (true) {
+  while (true) {
     /* Slave process execution */
     receive_matrix(working_arr, rank);
 
@@ -232,7 +237,8 @@ void run_slave(void) {
     current_precision = get_max(precision_arr, nrelaxed);
 
     printf("SLAVE %d: local precision is %f.\n", rank, current_precision);
-  //}
+    return_precision(current_precision);
+  }
 }
 
 /* Calculate useful values at startup */

@@ -2,7 +2,7 @@
 
 d=${1:-"20"}
 n=${2:-"4"}
-p=${3:-"0.0001"}
+p=${3:-"0.01"}
 times=${4:-"20"}
 
 echo "If no suspected race conditions/transient errors are found, only the \
@@ -16,7 +16,7 @@ echo \
 # inform the user
 for i in `seq 1 $times`;
 do
-    output=` ./re -n$n p$p d$d`
+    output=` mpirun ./re -n$n p$p d$d`
     n_iters=`echo $output | sed "s/.*(//" | sed "s/[^0-9]//g"`
     last_change=`echo $output | sed "s/.*change: //" | sed "s/ Rel.*//"`
 

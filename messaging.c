@@ -11,7 +11,7 @@
 struct process_data;
 
 extern bool v, V;
-extern int length, dim, nprocesses;
+extern int length, dim, nprocesses, rank;
 extern process_data *p_data;
 
 /*
@@ -127,3 +127,21 @@ void receive_matrix(float *data, int rank) {
     }
   }
 }
+
+void collect_precision(float *prec) {
+  MPI_Status status;
+
+  int i;
+  for (i = 1; i < nprocesses; ++i) {
+    MPI_Recv( &prec[i], 1, MPI_FLOAT, i, return_data_tag, MPI_COMM_WORLD,
+              &status);
+    printf("MASTER: Collected precision (%f) from process %d\n", prec[i], i);
+  }
+}
+
+void return_precision(float prec) {
+  printf("SLAVE %d: Reporting precision\n", rank);
+  MPI_Send( &prec, 1, MPI_FLOAT, ROOT_PROCESS, return_data_tag,
+            MPI_COMM_WORLD                                     );
+}
+
