@@ -67,6 +67,7 @@ void relax (int start_ix, int end_ix, float *arr, float *new_values)
         }
     }
     printf("\n");
+    ++iter_counter;
 }
 
 /*
@@ -88,7 +89,7 @@ bool is_finished(float max_change)
     }
 
     /* Check base condition - return true if precision is high enough */
-    if (max_change < precision)
+    if (max_change <= precision)
     {
         if (!v) // prevent informing twice in verbose mode
             printf("Max change: %f\n", max_change);
@@ -101,7 +102,6 @@ bool is_finished(float max_change)
     }
     else
     {
-        ++iter_counter;
         /* Verboseness */
         if (v)
         {

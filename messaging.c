@@ -1,6 +1,5 @@
 #include "messaging.h"
 
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -145,3 +144,22 @@ void return_precision(float prec) {
             MPI_COMM_WORLD                                     );
 }
 
+/* Signals completion of the progress by changing the matrix in an
+ * uncharacteristic way
+ */
+void send_termination_signal(float *data) {
+  if (V) printf("MASTER: Sending termination signal!\n");
+  int i;
+  // Increment the left edge, which wouldn't change during normal execution
+  for (i = 0; i < length; i++) {
+    if (i % dim == 0) data[i]++;
+  }
+  /* Send matrix containing signal as the last message of the program */
+  send_matrix(data, ROOT_PROCESS);
+}
+
+/* Checks the state change of the matrix for the termination signal */
+bool contains_termination_signal(float * data, float *prev_data) {
+  if (V) printf("SLAVE %d: Checking for termination signal!\n", rank);
+  return data[0] == (prev_data[0] + 1);
+}

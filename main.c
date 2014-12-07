@@ -19,7 +19,7 @@ int dim = 0,
     nprocesses,
     min_elements_per_process,
     min_rows_per_process,
-    iter_counter = 1,
+    iter_counter = 0,
     rank,
     start_ix,
     end_ix,
@@ -31,19 +31,6 @@ float precision, current_precision;
 float *arr, *precision_arr, *working_arr, *new_working_arr;
 
 struct process_data *p_data;
-
-/*
- * Sends processes their array indices
- */
-void dispatch_work(void) {
-  /* (For now) send the whole array to each processes */
-
-  if (V) printf("\nAssigning Work and Starting Parallel Section\n");
-  if (V) printf("============================================\n\n");
-
-  /* Send matrix to processes */
-  send_matrix(arr, ROOT_PROCESS);
-}
 
 /*
  * Sets the variables which tell the processes which part of the array to work
@@ -193,7 +180,7 @@ void run_master(void) {
                   p_data[ROOT_PROCESS].start_ix,
                   p_data[ROOT_PROCESS].end_ix    );
     if (v) printf("MASTER: Dispatching work!\n");
-    dispatch_work(); // Dispatch work to other processes
+    send_matrix(arr, ROOT_PROCESS);
 
     int nrelaxed = process_relax(arr, new_working_arr);
     if (v) printf("MASTER: Ready to merge relaxed fragments\n");
@@ -217,7 +204,7 @@ void run_master(void) {
     current_precision = get_max(precs, nprocesses);
     printf("MASTER: Global precision is %f.\n", current_precision);
     if ( is_finished(current_precision) ) {
-      // TODO send/broadcast termination signal
+      send_termination_signal(arr);
       return;
     }
   }
@@ -225,10 +212,13 @@ void run_master(void) {
 
 void run_slave(void) {
   while (true) {
-    // TODO non-blocking receive for termination signal
-    // Note: As receive_matrix is blocking, some dummy data may have to be
-    // received
     receive_matrix(working_arr, rank);
+    /* The matrix will contain a signal if precision has been reached */
+    if (iter_counter != 0) {
+      if (V) printf("SLAVE %d: Checking for termination signal!\n", rank);
+      // new_working_arr contains last iterations result
+      if (contains_termination_signal(working_arr, new_working_arr)) break;
+    }
     int nrelaxed = process_relax(working_arr, new_working_arr);
     if (v) printf("SLAVE %d: Ready to return fragment\n", rank);
     if (V) print_matrix(new_working_arr, nrelaxed, dim);
