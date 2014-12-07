@@ -156,12 +156,7 @@ void init(int argc, char *argv[]) {
 
 int get_rel_end_ix(void) {
   int rel_end_ix = p_data[rank].nelements;
-  if (rank == ROOT_PROCESS || rank == nprocesses - 1) {
-    rel_end_ix += dim;
-  }
-  else {
-    rel_end_ix += 2 * dim;
-  }
+  rel_end_ix += dim * get_nrows_of_padding();
   return rel_end_ix;
 }
 
@@ -189,6 +184,8 @@ void run_master(void) {
     if (V) printf("MASTER: About to start working on [%d-%d)...\n",
                   p_data[ROOT_PROCESS].start_ix,
                   p_data[ROOT_PROCESS].end_ix    );
+
+    // Only send out work if there are multiple processors
     if (v) printf("MASTER: Dispatching work!\n");
     send_matrix(arr, ROOT_PROCESS);
 
@@ -200,19 +197,20 @@ void run_master(void) {
     if (v) printf("MASTER: calculating precision\n");
     recalc_prec_arr( 0, nrelaxed, arr, new_working_arr, precision_arr );
 
+    print_matrix(precision_arr, length, dim);
     // Copy back relaxed values
     memcpy(arr, new_working_arr, nrelaxed * sizeof(float));
-
-    current_precision = get_max(precision_arr, nrelaxed);
 
     receive_matrix(arr, rank);
 
     float precs[nprocesses];
+    precs[ROOT_PROCESS] = get_max(precision_arr, nrelaxed);
+
     collect_precision(precs);
 
     current_precision = get_max(precs, nprocesses);
     printf("MASTER: Global precision is %f.\n", current_precision);
-    if ( is_finished(current_precision) ) {
+    if ( is_finished(current_precision) && nprocesses != 0) {
       send_termination_signal(arr);
       return;
     }

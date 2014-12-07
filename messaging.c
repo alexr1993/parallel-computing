@@ -26,6 +26,7 @@ extern process_data *p_data;
  */
 void send_matrix(float *data, int rank) {
 
+  if (nprocesses == 1) return;
 
   if (rank == ROOT_PROCESS) {
     // Send matrix to slaves
@@ -108,12 +109,7 @@ void receive_matrix(float *data, int rank) {
   } else {
     int recv_length = p_data[rank].nelements;
 
-    /* Add length for padding rows */
-    if (rank == 0 || rank == nprocesses - 1) {
-      recv_length += dim;
-    } else {
-      recv_length += 2 * dim;
-    }
+    recv_length += dim * get_nrows_of_padding();
 
     if (V) printf("SLAVE %d: Waiting for matrix (%d elems)\n",
                   rank, recv_length);
@@ -126,6 +122,7 @@ void receive_matrix(float *data, int rank) {
 }
 
 void collect_precision(float *prec) {
+  if (nprocesses == 1) return;
   MPI_Status status;
 
   int i;

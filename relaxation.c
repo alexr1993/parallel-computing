@@ -92,7 +92,7 @@ bool is_finished(float max_change)
     if (max_change <= precision)
     {
         if (!v) // prevent informing twice in verbose mode
-            printf("Max change: %f\n", max_change);
+          printf("Max change: %f\n", max_change);
 
         printf("\nRelaxation Complete (%d Iterations)!\n",
                iter_counter);

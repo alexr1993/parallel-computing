@@ -1,11 +1,16 @@
+#include "util.h"
+
 #include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "messaging.h"
+
 extern bool v, V;
 extern int rank;
+extern int nprocesses;
 
 /*
  * Sequentially prints matrix (may be a fragment, determined by length)
@@ -142,4 +147,20 @@ float get_max(float *arr, int len) {
     if (arr[i] > max) max = arr[i];
   }
   return max;
+}
+
+/* Governs whether the process needs 1 or 2 extra rows of padding to perform
+ * relaxation
+ */
+int get_nrows_of_padding(void) {
+  // 1 process for whole array
+  if (nprocesses == 1) {
+    return 0;
+  // Process has the top or bottom row instead of padding
+  } else if (rank == ROOT_PROCESS || rank == nprocesses -1) {
+    return 1;
+  // Process needs padding for both top and bottom
+  } else {
+    return 2;
+  }
 }
