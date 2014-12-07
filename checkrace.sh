@@ -16,7 +16,7 @@ echo \
 # inform the user
 for i in `seq 1 $times`;
 do
-    output=` mpirun ./re -n$n p$p d$d`
+    output=` mpirun -np$n ./re p$p d$d`
     n_iters=`echo $output | sed "s/.*(//" | sed "s/[^0-9]//g"`
     last_change=`echo $output | sed "s/.*change: //" | sed "s/ Rel.*//"`
 

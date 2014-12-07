@@ -17,7 +17,6 @@ bool v, V; //verbose
 int dim = 0,
     length = 0,
     nprocesses,
-    min_elements_per_process,
     min_rows_per_process,
     iter_counter = 0,
     rank,
@@ -139,6 +138,9 @@ void init(int argc, char *argv[]) {
     printf("Error starting MPI program. Terminating.\n");
     MPI_Abort(MPI_COMM_WORLD, rc);
   }
+  MPI_Comm_rank(MPI_COMM_WORLD, &rank); // Get current process id
+  MPI_Comm_size(MPI_COMM_WORLD, &nprocesses); // Get number of processes
+
   parse_args(argc, argv);
   establish_gbls();
 }
@@ -236,10 +238,6 @@ void run_slave(void) {
 
 /* Calculate useful values at startup */
 void establish_gbls(void) {
-  MPI_Comm_rank(MPI_COMM_WORLD, &rank); // Get current process id
-  MPI_Comm_size(MPI_COMM_WORLD, &nprocesses); // Get number of processes
-
-  min_elements_per_process = length / nprocesses;
   min_rows_per_process = dim / nprocesses;
 
   p_data = malloc(nprocesses * sizeof(struct process_data));
@@ -267,6 +265,5 @@ void establish_gbls(void) {
   new_working_arr = malloc(dim * (p_data[rank].nrows + 2) * sizeof(float));
   precision_arr = malloc(dim * (p_data[rank].nrows + 2) * sizeof(float));
 
-  if (v) printf("Min elements per process: %d\n\n", min_elements_per_process);
   if (v) printf("Min rows per process: %d\n\n", min_rows_per_process);
 }

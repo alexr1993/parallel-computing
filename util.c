@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 extern bool v, V;
+extern int rank;
 
 /*
  * Sequentially prints matrix (may be a fragment, determined by length)
@@ -52,6 +53,7 @@ void validate_array(char *filename, int *length, int *dim) {
   FILE *input = fopen(filename, "r");
   int character = fgetc(input);
 
+  if (V) printf("PROCESS %d: Calculating array length.\n", rank);
   int len = 0;
   while (character != EOF) {
     // Count anything that's not a space
@@ -62,6 +64,7 @@ void validate_array(char *filename, int *length, int *dim) {
   }
   fclose(input);
 
+  if (V) printf("PROCESS %d: Checking array is square.\n", rank);
   // Check array is square
   double root_of_length = sqrt((double)len);
   if (floor(root_of_length) == root_of_length) {
@@ -80,17 +83,16 @@ void validate_array(char *filename, int *length, int *dim) {
  *
  * Input matrices must contain only digits, non tab spaces, and newliens
  */
-float *read_array(float *arr, char *filename, int *length, int *dim) {
+float *read_array(char *filename, int *length, int *dim) {
+  if (V) printf("PROCESS %d: Reading file: %s.\n", rank, filename);
 
   // Infer dimension and check validity or matrix
   validate_array(filename, length, dim);
 
-  FILE *input;
-
   // Deserialize array
-  arr = malloc(*length * sizeof(float));
+  float *arr = malloc(*length * sizeof(float));
   int i;
-  input = fopen(filename, "r"); // reopen file to reset ptr
+  FILE *input = fopen(filename, "r");
 
   int temp;
 
@@ -105,7 +107,7 @@ float *read_array(float *arr, char *filename, int *length, int *dim) {
   }
 
   fclose(input);
-  if (v) printf("Successfully read matrix:\n");
+  if (v) printf("PROCESS %d: Successfully read matrix:\n", rank);
   if (v) print_matrix(arr, *length, *dim);
 
   return arr;
@@ -124,7 +126,7 @@ float *create_plain_matrix(int length, int dim) {
       arr[i] = 0;
     }
   }
-  if (v) printf("Initiated plain matrix:\n");
+  if (v) printf("PROCESS %d: Initiated plain matrix:\n", rank);
   if (v) printf("Matrix length: %d, dimension: %d\n\n", length, dim);
   if (v) print_matrix(arr, length, dim);
 
