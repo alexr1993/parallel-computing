@@ -14,6 +14,7 @@
 #include "messaging.h"
 
 bool v, V; //verbose
+char *filename;
 int dim = 0,
     length = 0,
     nprocesses,
@@ -58,7 +59,7 @@ void calculate_work_area(void) {
 void parse_args(int argc, char *argv[]) {
 
   /* Set Default Args */
-  char *filename = NULL;
+  filename = NULL;
   dim = 50;
   precision = 0.1;
   v = false;
@@ -100,12 +101,11 @@ void parse_args(int argc, char *argv[]) {
     if (filename) {
       arr = read_array(filename, &length, &dim);
     } else {
-      printf("Generating matrix as no filename given.\n\n");
+      if (v) printf("Generating matrix as no filename given.\n\n");
       length = dim * dim;
       arr = create_plain_matrix(length, dim);
     }
   }
-  free(filename);
 
   if (rank == ROOT_PROCESS) {
     send_size();
@@ -175,8 +175,12 @@ int process_relax(float *input_arr, float *output_arr) {
  * the return array rows, as well as precision value to check for completion
  */
 void run_master(void) {
-  printf("\nSTARTING MASTER EXECUTION\n");
-  printf("=========================\n\n");
+  printf("Beginning relaxation using processes: %d, precision %f, dim %d",
+         nprocesses, precision, dim);
+  printf(", file %s...\n", filename);
+
+  if (v) printf("\nSTARTING MASTER EXECUTION\n");
+  if (v) printf("=========================\n\n");
 
   /* Branch for master and slave execution */
 
@@ -197,7 +201,6 @@ void run_master(void) {
     if (v) printf("MASTER: calculating precision\n");
     recalc_prec_arr( 0, nrelaxed, arr, new_working_arr, precision_arr );
 
-    print_matrix(precision_arr, length, dim);
     // Copy back relaxed values
     memcpy(arr, new_working_arr, nrelaxed * sizeof(float));
 
@@ -209,7 +212,7 @@ void run_master(void) {
     collect_precision(precs);
 
     current_precision = get_max(precs, nprocesses);
-    printf("MASTER: Global precision is %f.\n", current_precision);
+    if (v) printf("MASTER: Global precision is %f.\n", current_precision);
     if ( is_finished(current_precision) && nprocesses != 0) {
       send_termination_signal(arr);
       return;

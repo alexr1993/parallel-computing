@@ -2,14 +2,14 @@
 
 d=${1:-"20"}
 n=${2:-"4"}
-p=${3:-"0.01"}
+p=${3:-"0.001"}
 times=${4:-"20"}
 
 echo "If no suspected race conditions/transient errors are found, only the \
 first and last results are printed"
 
 echo \
-"Testing $times times on a $d x $d matrix wth precision $p on $n $threads..."
+"Testing $times times on a $d x $d matrix wth precision $p on $n processes..."
 
 # Run the program a number of times and compare the number of iterations and
 # the final precision against the last run. If there has been a change then
