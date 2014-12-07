@@ -217,6 +217,7 @@ void run_master(void) {
     current_precision = get_max(precs, nprocesses);
     printf("MASTER: Global precision is %f.\n", current_precision);
     if ( is_finished(current_precision) ) {
+      // TODO send/broadcast termination signal
       return;
     }
   }
@@ -224,9 +225,10 @@ void run_master(void) {
 
 void run_slave(void) {
   while (true) {
-    /* Slave process execution */
+    // TODO non-blocking receive for termination signal
+    // Note: As receive_matrix is blocking, some dummy data may have to be
+    // received
     receive_matrix(working_arr, rank);
-
     int nrelaxed = process_relax(working_arr, new_working_arr);
     if (v) printf("SLAVE %d: Ready to return fragment\n", rank);
     if (V) print_matrix(new_working_arr, nrelaxed, dim);
@@ -236,6 +238,7 @@ void run_slave(void) {
     recalc_prec_arr(0, nrelaxed, working_arr, new_working_arr, precision_arr);
     current_precision = get_max(precision_arr, nrelaxed);
 
+    // TODO wait for termination signal, and terminate if necessary
     printf("SLAVE %d: local precision is %f.\n", rank, current_precision);
     return_precision(current_precision);
   }
