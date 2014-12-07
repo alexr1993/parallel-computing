@@ -66,7 +66,7 @@ void relax (int start_ix, int end_ix, float *arr, float *new_values)
             new_values[i] = (right + left + above + below) / 4;
         }
     }
-    printf("\n");
+    if (v) printf("\n");
     ++iter_counter;
 }
 

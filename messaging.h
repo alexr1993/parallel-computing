@@ -14,5 +14,6 @@ void collect_precision(float *prec);
 void return_precision(float prec);
 void send_termination_signal(float *data);
 bool contains_termination_signal(float * data, float *prev_data);
-
+void send_size(void);
+void receive_size(void);
 #endif

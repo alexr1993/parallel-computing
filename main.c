@@ -60,7 +60,7 @@ void parse_args(int argc, char *argv[]) {
   /* Set Default Args */
   char *filename = NULL;
   dim = 50;
-  precision  = 0.1;
+  precision = 0.1;
   v = false;
   V = false;
 
@@ -95,15 +95,23 @@ void parse_args(int argc, char *argv[]) {
         break;
     }
   }
-  /* Initialise Matrix */
-  if (filename) {
-    arr = read_array(filename, &length, &dim);
-  } else {
-    printf("Generating matrix as no filename given.\n\n");
-    length = dim * dim;
-    arr = create_plain_matrix(length, dim);
+  if (rank == ROOT_PROCESS) {
+    /* Initialise Matrix */
+    if (filename) {
+      arr = read_array(filename, &length, &dim);
+    } else {
+      printf("Generating matrix as no filename given.\n\n");
+      length = dim * dim;
+      arr = create_plain_matrix(length, dim);
+    }
   }
   free(filename);
+
+  if (rank == ROOT_PROCESS) {
+    send_size();
+  } else {
+    receive_size();
+  }
 }
 
 void init(int argc, char *argv[]);
@@ -114,12 +122,13 @@ void recover_matrix(void);
 
 int main (int argc, char *argv[]) {
 
-
   init(argc, argv);
   if (rank == ROOT_PROCESS) {
     run_master();
   } else {
-    printf("SLAVE %d: Entering main loop.\n", rank);
+    if (v)
+      printf("SLAVE %d: Starting operation on %d x %d matrix (%d elems).\n",
+           rank, dim, dim, length);
     run_slave();
   }
 
@@ -172,10 +181,9 @@ int process_relax(float *input_arr, float *output_arr) {
  */
 void run_master(void) {
   printf("\nSTARTING MASTER EXECUTION\n");
-  printf("================\n\n");
+  printf("=========================\n\n");
 
   /* Branch for master and slave execution */
-  printf("This is the master! (process %d of %d)\n", rank, nprocesses);
 
   while (true) {
     if (v) printf("MASTER: About to start working on [%d-%d)...\n",
@@ -189,14 +197,14 @@ void run_master(void) {
     if (V) print_matrix(new_working_arr, nrelaxed, dim);
 
     // Calculate precision
-    printf("MASTER: calculating precision\n");
+    if (v) printf("MASTER: calculating precision\n");
     recalc_prec_arr( 0, nrelaxed, arr, new_working_arr, precision_arr );
 
     // Copy back relaxed values
     memcpy(arr, new_working_arr, nrelaxed * sizeof(float));
 
     current_precision = get_max(precision_arr, nrelaxed);
-    printf("MASTER: local precision is %f.\n", current_precision);
+    if (v) printf("MASTER: local precision is %f.\n", current_precision);
 
     receive_matrix(arr, rank);
 
@@ -217,9 +225,12 @@ void run_slave(void) {
     receive_matrix(working_arr, rank);
     /* The matrix will contain a signal if precision has been reached */
     if (iter_counter != 0) {
-      if (V) printf("SLAVE %d: Checking for termination signal!\n", rank);
       // new_working_arr contains last iterations result
-      if (contains_termination_signal(working_arr, new_working_arr)) break;
+      if (contains_termination_signal(working_arr, new_working_arr)) {
+        if (v) printf("SLAVE %d: Termination signal received, exiting!\n",
+                      rank);
+        break;
+      }
     }
     int nrelaxed = process_relax(working_arr, new_working_arr);
     if (v) printf("SLAVE %d: Ready to return fragment\n", rank);
@@ -231,7 +242,8 @@ void run_slave(void) {
     current_precision = get_max(precision_arr, nrelaxed);
 
     // TODO wait for termination signal, and terminate if necessary
-    printf("SLAVE %d: local precision is %f.\n", rank, current_precision);
+    if (v)
+      printf("SLAVE %d: local precision is %f.\n", rank, current_precision);
     return_precision(current_precision);
   }
 }
