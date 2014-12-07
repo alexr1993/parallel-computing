@@ -169,7 +169,7 @@ int get_rel_end_ix(void) {
 int process_relax(float *input_arr, float *output_arr) {
   int rel_start_ix = 0, rel_end_ix = get_rel_end_ix();
 
-  if (v) printf("SLAVE %d: Relaxing elements [%d-%d)\n", rank,
+  if (V) printf("SLAVE %d: Relaxing elements [%d-%d)\n", rank,
                 rel_start_ix, rel_end_ix);
   relax(rel_start_ix, rel_end_ix, input_arr, output_arr);
   return rel_end_ix;
@@ -186,14 +186,14 @@ void run_master(void) {
   /* Branch for master and slave execution */
 
   while (true) {
-    if (v) printf("MASTER: About to start working on [%d-%d)...\n",
+    if (V) printf("MASTER: About to start working on [%d-%d)...\n",
                   p_data[ROOT_PROCESS].start_ix,
                   p_data[ROOT_PROCESS].end_ix    );
     if (v) printf("MASTER: Dispatching work!\n");
     send_matrix(arr, ROOT_PROCESS);
 
     int nrelaxed = process_relax(arr, new_working_arr);
-    if (v) printf("MASTER: Ready to merge relaxed fragments\n");
+    if (V) printf("MASTER: Ready to merge relaxed fragments\n");
     if (V) print_matrix(new_working_arr, nrelaxed, dim);
 
     // Calculate precision
@@ -204,7 +204,6 @@ void run_master(void) {
     memcpy(arr, new_working_arr, nrelaxed * sizeof(float));
 
     current_precision = get_max(precision_arr, nrelaxed);
-    if (v) printf("MASTER: local precision is %f.\n", current_precision);
 
     receive_matrix(arr, rank);
 
@@ -233,17 +232,14 @@ void run_slave(void) {
       }
     }
     int nrelaxed = process_relax(working_arr, new_working_arr);
-    if (v) printf("SLAVE %d: Ready to return fragment\n", rank);
+    if (V) printf("SLAVE %d: Ready to return fragment\n", rank);
     if (V) print_matrix(new_working_arr, nrelaxed, dim);
     send_matrix(new_working_arr, rank);
 
-    if (v) printf("SLAVE %d: calculating precision\n", rank);
+    if (V) printf("SLAVE %d: calculating precision\n", rank);
     recalc_prec_arr(0, nrelaxed, working_arr, new_working_arr, precision_arr);
     current_precision = get_max(precision_arr, nrelaxed);
 
-    // TODO wait for termination signal, and terminate if necessary
-    if (v)
-      printf("SLAVE %d: local precision is %f.\n", rank, current_precision);
     return_precision(current_precision);
   }
 }

@@ -48,7 +48,7 @@ void send_matrix(float *data, int rank) {
       if (i != nprocesses - 1) {
         send_length += dim;
       }
-      if (v)
+      if (V)
         printf("MASTER: Sending elems [%d-%d) to SLAVE %d to work on [%d-%d)...\n",
                start_ix,
                start_ix + send_length,
@@ -61,11 +61,11 @@ void send_matrix(float *data, int rank) {
                 send_data_tag,
                 MPI_COMM_WORLD                  );
 
-      if (v) printf("MASTER: Successfuly sent work to process %d!\n", i);
+      if (V) printf("MASTER: Successfuly sent work to process %d!\n", i);
     }
   } else {
     // dim is the index of the first relevant element
-    if (v) printf("SLAVE %d: Returning %d elements starting from index: %d\n",
+    if (V) printf("SLAVE %d: Returning %d elements starting from index: %d\n",
            rank, p_data[rank].nelements, dim);
     MPI_Send( &data[dim],
               p_data[rank].nelements,
@@ -95,7 +95,7 @@ void receive_matrix(float *data, int rank) {
     /* Read the array back in chunks */
     for (i = 1; i < nprocesses; ++i) {
       recv_length = p_data[i].nelements;
-      if (v)
+      if (V)
         printf("MASTER: Receiving %d elems starting from %d from process %d\n",
                recv_length, recv_ix, i);
 
@@ -115,15 +115,13 @@ void receive_matrix(float *data, int rank) {
       recv_length += 2 * dim;
     }
 
-    if (v) printf("SLAVE %d: Waiting for matrix (%d elems)\n",
+    if (V) printf("SLAVE %d: Waiting for matrix (%d elems)\n",
                   rank, recv_length);
     MPI_Recv( data,         recv_length,       MPI_FLOAT,
               ROOT_PROCESS, send_data_tag, MPI_COMM_WORLD,
               &status );
-    if (v) {
-      printf("SLAVE %d: Received matrix successfully!\n", rank);
-      print_matrix(data, recv_length, dim);
-    }
+    if (V) printf("SLAVE %d: Received matrix successfully!\n", rank);
+    if (V) print_matrix(data, recv_length, dim);
   }
 }
 
@@ -139,7 +137,7 @@ void collect_precision(float *prec) {
 }
 
 void return_precision(float prec) {
-  if (v) printf("SLAVE %d: Reporting precision (%f)\n", rank, prec);
+  if (V) printf("SLAVE %d: Reporting precision (%f)\n", rank, prec);
   MPI_Send( &prec, 1, MPI_FLOAT, ROOT_PROCESS, return_data_tag,
             MPI_COMM_WORLD                                     );
 }
@@ -148,7 +146,7 @@ void return_precision(float prec) {
  * uncharacteristic way
  */
 void send_termination_signal(float *data) {
-  if (V) printf("MASTER: Sending termination signal!\n");
+  if (v) printf("MASTER: Sending termination signal!\n");
   int i;
   // Increment the left edge, which wouldn't change during normal execution
   for (i = 0; i < length; i++) {
@@ -176,7 +174,5 @@ void receive_size(void) {
   MPI_Status status;
   MPI_Recv( &dim, 1, MPI_INT, ROOT_PROCESS, send_data_tag, MPI_COMM_WORLD,
             &status);
-  if (v) printf("SLAVE %d received dimensionality of %d from MASTER.\n",
-               rank, dim);
   length = dim * dim;
 }

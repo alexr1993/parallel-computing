@@ -66,7 +66,7 @@ void relax (int start_ix, int end_ix, float *arr, float *new_values)
             new_values[i] = (right + left + above + below) / 4;
         }
     }
-    if (v) printf("\n");
+    if (V) printf("\n");
     ++iter_counter;
 }
 
@@ -112,7 +112,6 @@ bool is_finished(float max_change)
             }
             printf("\nPrecision Not Reached - Iterating\n");
             if (V) printf("=================================\n");
-            printf("\n");
         }
         return false;
     }
