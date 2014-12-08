@@ -4,8 +4,4 @@
 #PBS -e stderr
 #PBS -l nodes=4:ppn=8
 
-make
-./checkrace.sh 80 32 0.001 100
-
-#mpirun -np $PBS_NP -machinefile $PBS_NODEFILE ./re -V -d10 >> out
-
+./run.sh 1600

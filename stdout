@@ -1,5 +1,0 @@
-mpicc -g -Wall -c main.c
-mpicc -g -Wall -c relaxation.c
-mpicc -g -Wall -c util.c
-mpicc -g -Wall -c messaging.c
-mpicc -o re main.o relaxation.o util.o messaging.o -lm -lmpi

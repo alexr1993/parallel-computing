@@ -27,6 +27,7 @@ extern process_data *p_data;
 void send_matrix(float *data, int rank) {
 
   if (nprocesses == 1) return;
+  MPI_Request request;
 
   if (rank == ROOT_PROCESS) {
     // Send matrix to slaves
@@ -55,12 +56,12 @@ void send_matrix(float *data, int rank) {
                start_ix + send_length,
                i,
                p_data[i].start_ix, p_data[i].end_ix );
-      MPI_Send( &data[start_ix],
+      MPI_Isend( &data[start_ix],
                 send_length,
                 MPI_FLOAT,
                 i,
                 send_data_tag,
-                MPI_COMM_WORLD                  );
+                MPI_COMM_WORLD, &request                 );
 
       if (V) printf("MASTER: Successfuly sent work to process %d!\n", i);
     }
@@ -68,12 +69,12 @@ void send_matrix(float *data, int rank) {
     // dim is the index of the first relevant element
     if (V) printf("SLAVE %d: Returning %d elements starting from index: %d\n",
            rank, p_data[rank].nelements, dim);
-    MPI_Send( &data[dim],
+    MPI_Isend( &data[dim],
               p_data[rank].nelements,
               MPI_FLOAT,
               ROOT_PROCESS,
               return_data_tag,
-              MPI_COMM_WORLD           );
+              MPI_COMM_WORLD, &request           );
   }
 }
 
