@@ -3,5 +3,5 @@
 #PBS -o stdout
 #PBS -e stderr
 #PBS -l nodes=4:ppn=8
-
-./run.sh 1600
+#PBS -l walltime=00:05:00
+./run.sh 800
